@@ -55,5 +55,9 @@
     "prettier": "^2.8.1",
     "tailwindcss": "^3.2.4",
     "ts-jest": "^29.0.5"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/AndresC10/paraCuando.git",
+  "author": "OnilBlanco26 <onilblanco26@gmail.com>",
+  "license": "MIT"
 }

@@ -15,6 +15,24 @@
   .app-title-1 {
     @apply font-black text-5xl leading-[56px] font-Roboto;
   }
+  .app-subtitle-1 {
+    @apply font-medium text-base leading-[19px] font-Roboto;
+  }
+  .app-title-2 {
+    @apply font-medium text-2xl leading-[28px] font-Roboto;
+  }
+  .app-subtitle-2 {
+    @apply font-normal text-base leading-[19px] font-Roboto;
+  }
+  .app-title-3 {
+    @apply font-semibold text-xl leading-[23px] font-Roboto;
+  }
+  .app-text-1 {
+    @apply font-normal text-[15px] leading-[18px] font-Roboto;
+  }
+  .app-text-2 {
+    @apply font-normal text-sm leading-[16px] font-Roboto;
+  }
 
   .app-banner {
     @apply w-screen m-auto relative left-[calc(-50vw_+_50%)];
