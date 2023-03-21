@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { Layout } from '../../components/layout/Layout';
-import { NextPageWithLayout } from '../page';
+import { Layout } from '../../../components/layout/Layout';
+import { NextPageWithLayout } from '../../page';
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { category_id } = router.query;
@@ -8,7 +8,7 @@ export const CategoryPage: NextPageWithLayout = () => {
     <div>
       <h1 className="text-2xl">
         {' '}
-        this page is{' '}
+        this page is category{' '}
         <span className="text-app-red text-6xl">{category_id}</span>
       </h1>
     </div>
