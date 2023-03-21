@@ -24,13 +24,13 @@ const Home: NextPageWithLayout = () => {
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
           <div className="flex items-center justify-center gap-2">
-            <Link href={'/category/marcas-y-tiendas'}>
+            <Link href={'/category/brands-and-stores'}>
               <button>Marcas y tiendas</button>
             </Link>
-            <Link href={'/category/marcas-y-tiendas'}>
+            <Link href={'/category/events'}>
               <button>Artistas y conciertos</button>
             </Link>
-            <Link href={'/category/marcas-y-tiendas'}>
+            <Link href={'/category/music'}>
               <button>Torneos</button>
             </Link>
           </div>
