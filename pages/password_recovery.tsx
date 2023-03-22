@@ -1,3 +1,7 @@
-export default function PassRecovery() {
-  return <div>Password Recovery</div>;
-}
+import { NextPageWithLayout } from './page';
+
+const PasswordRecovery: NextPageWithLayout = () => {
+  return <div>Post</div>;
+};
+
+export default PasswordRecovery;
