@@ -5,7 +5,6 @@ import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
 import { useCategories } from '../lib/services/categories.services';
 import { NextPageWithLayout } from './page';
 import { CardEvent } from '../lib/interfaces/cardEvent.interface';
-import { Search } from '../components/assets/svg/Search';
 
 const Home: NextPageWithLayout = () => {
   const { data, error, isLoading } = useCategories();
@@ -63,17 +62,22 @@ const Home: NextPageWithLayout = () => {
             className="px-6 py-4 rounded-3xl w-full sm:w-[465px]"
             type="text"
             placeholder="¿Qué quieres ver en tu ciudad?"
-
           />
           <div className="relative flex items-center justify-center gap-2">
             <Link href={'/category/brands-and-stores'}>
-              <button className='bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]'>Marcas y tiendas</button>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                Marcas y tiendas
+              </button>
             </Link>
             <Link href={'/category/events'}>
-              <button className='bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]'>Artistas y conciertos</button>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                Artistas y conciertos
+              </button>
             </Link>
             <Link href={'/category/music'}>
-              <button className='bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]'>Torneos</button>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                Torneos
+              </button>
             </Link>
           </div>
         </div>
@@ -95,20 +99,36 @@ const Home: NextPageWithLayout = () => {
       </div>
 
       <div className="relative flex-col h-[250px] w-80% bg-[#f8f7fa]">
-        <h2 className='relative ml-12 top-6 app-title-2 text-app-grayDark'>¡Hagámoslo más personal!</h2>
-        <p className='relative ml-12 top-8 app-subtitle-2 text-app-grayDark'>Selecciona tus interes para brindarte sugerencia de acuerdo a tus gustos</p>
-        <div className='flex gap-2 flex-wrap mx-2 mt-2'>
-          <button className='relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]'>Marcas y tiendas</button>
-          <button className='relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]'>Artistas y conciertos</button>
-          <button className='relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]'>Torneos</button>
-          <button className='relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]'>Restaurantes</button>
-          <button className='relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]'>Rock</button>
+        <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
+          ¡Hagámoslo más personal!
+        </h2>
+        <p className="relative ml-12 top-8 app-subtitle-2 text-app-grayDark">
+          Selecciona tus interes para brindarte sugerencia de acuerdo a tus
+          gustos
+        </p>
+        <div className="flex gap-2 flex-wrap mx-2 mt-2">
+          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Marcas y tiendas
+          </button>
+          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Artistas y conciertos
+          </button>
+          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Torneos
+          </button>
+          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Restaurantes
+          </button>
+          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Rock
+          </button>
         </div>
         <Link href={'todoslosinteres'}>
-          <p className='relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4'>Ver todos los intereses</p>
+          <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">
+            Ver todos los intereses
+          </p>
         </Link>
       </div>
-
 
       <div className="h-[72vh] mt-8">
         <EventSlider
@@ -118,9 +138,6 @@ const Home: NextPageWithLayout = () => {
         />
       </div>
     </div>
-
-    
-
   );
 };
 
