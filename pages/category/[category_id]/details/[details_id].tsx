@@ -66,8 +66,8 @@ export const CategoryPage: NextPageWithLayout = () => {
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
         </div>
-      <div className='app-container mt-20 grid grid-cols-8 w-[80%] m-auto mb-20'>
-        <div className='col-span-4'>
+      <div className='app-container lg:flex mt-20 w-[80%] h-[500px] m-auto mb-20'>
+        <div className='lg:w-1/2'>
           <h3 className='app-subtitle-1 mb-1'>Artista / pop - rock</h3> 
           <h2 className='app-title-1 mb-4'>Concierto De Lady Gaga</h2>
           <p className='app-text-1 text-app-grayDark mb-8'>El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.</p>
@@ -79,11 +79,11 @@ export const CategoryPage: NextPageWithLayout = () => {
             <p className='app-text-1 text-sm'>LOGO</p>
             <p className='app-text-1 text-sm'>90,800,756 <span>votos</span> </p>
           </div> 
-          <button className='mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
+          <button className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
             Votar
           </button>
         </div>
-        <div className='ml-4 col-span-4 flex justify-center'>
+        <div className='ml-4 lg:w-1/2 flex justify-center'>
           <img className='w-full' src="../../../mock-event-image.png" alt="" />
         </div>
       </div>
