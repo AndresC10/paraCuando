@@ -12,7 +12,7 @@ interface IEventSlider {
 
 export const EventSlider: FC<IEventSlider> = ({ title, subtitle, events }) => {
   return (
-    <div>
+    <div className='app-container'>
       <div className="pb-6">
         <h2 className="app-title-2 pb-1">{title}</h2>
         <p className="app-subtitle-2">{subtitle}</p>
