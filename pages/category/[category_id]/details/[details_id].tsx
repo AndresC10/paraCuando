@@ -90,9 +90,42 @@ export const CategoryPage: NextPageWithLayout = () => {
             Votar
           </button>
         </div>
-        <div className='ml-4 lg:w-1/2 flex justify-center'>
+        <div className='lg:ml-4 lg:w-1/2 flex justify-center'>
           <img className='w-full' src="../../../mock-event-image.png" alt="" />
         </div>
+
+      </div>
+
+      <div className="relative  h-[250px] w-[941px] mx-auto bg-[#f8f7fa]">
+        <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
+          ¡Hagámoslo más personal!
+        </h2>
+        <p className="relative ml-12 top-8 app-subtitle-2 text-app-grayDark">
+          Selecciona tus interes para brindarte sugerencia de acuerdo a tus
+          gustos
+        </p>
+        <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px] py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Marcas y tiendas
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Artistas y conciertos
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Torneos
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Restaurantes
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Rock
+          </button>
+        </div>
+        <Link href={'todoslosinteres'}>
+          <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">
+            Ver todos los intereses
+          </p>
+        </Link>
       </div>
 
       <EventSlider title='Recientes' subtitle='Las personas ultimamente estan hablando de esto' events={events}  />
