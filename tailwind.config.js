@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     screens: {
       xs: '375px',
+      xxs: '450px',
       sm: '600px',
       md: '900px',
       lg: '1200px',
@@ -23,10 +24,11 @@ module.exports = {
         'app-gray': '#A7A6A7',
         'app-grayLight': '#D9D9D9',
         'app-grayLighter': '#F8F7FA',
-        'app-red': '#EF3F47'
+        'app-red': '#EF3F47',
       },
       fontFamily: {
         Roboto: ['Roboto', 'sans-serif'],
+        Inter: ['Inter, sans-serif'],
       },
       boxShadow: {
         'app-card': '0px 2px 4px rgba(0, 0, 0, 0.25)',
