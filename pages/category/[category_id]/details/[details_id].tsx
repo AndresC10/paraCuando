@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { User } from '../../../../components/assets/svg/User';
 import { Layout } from '../../../../components/layout/Layout';
 import { EventSlider } from '../../../../components/sliders/EventSlider/EventSlider';
 import { CardEvent } from '../../../../lib/interfaces/cardEvent.interface';
@@ -48,18 +49,24 @@ export const CategoryPage: NextPageWithLayout = () => {
   ];
   return (
     <div className=''>
-        <div className='header-shadow w-full h-[114px] flex items-center gap-4'>
-        <div className='flex gap-8'>
-          <Link href={'/category/brands-and-stores'}>
-                <button>Marcas y tiendas</button>
-              </Link>
-              <Link href={'/category/events'}>
-                <button>Artistas y conciertos</button>
-              </Link>
-              <Link href={'/category/music'}>
-                <button>Torneos</button>
-              </Link>
-        </div>
+        <div className='header-shadow w-full h-[114px] flex justify-around items-center gap-4'>
+        <div className="relative flex items-center justify-center gap-2">
+            <Link href={'/category/brands-and-stores'}>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                Marcas y tiendas
+              </button>
+            </Link>
+            <Link href={'/category/events'}>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                Artistas y conciertos
+              </button>
+            </Link>
+            <Link href={'/category/music'}>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                Torneos
+              </button>
+            </Link>
+          </div>
             <input
             className="px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2"
             type="text"
@@ -75,10 +82,10 @@ export const CategoryPage: NextPageWithLayout = () => {
             ladygaga.com
           </Link>
 
-          <div className='flex gap-2 mt-3 ml-2'>
-            <p className='app-text-1 text-sm'>LOGO</p>
-            <p className='app-text-1 text-sm'>90,800,756 <span>votos</span> </p>
-          </div> 
+          <div className="flex gap-2 mt-2">
+            <User />
+            <p className="app-text-2 font-semibold mt-[4.4px]"> 999,789,000 votos</p>
+          </div>
           <button className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
             Votar
           </button>
