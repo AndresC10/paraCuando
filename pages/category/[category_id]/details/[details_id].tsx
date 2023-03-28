@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { User } from '../../../../components/assets/svg/User';
 import { Layout } from '../../../../components/layout/Layout';
 import { EventSlider } from '../../../../components/sliders/EventSlider/EventSlider';
 import { CardEvent } from '../../../../lib/interfaces/cardEvent.interface';
@@ -48,18 +49,24 @@ export const CategoryPage: NextPageWithLayout = () => {
   ];
   return (
     <div className=''>
-        <div className='header-shadow w-full h-[114px] flex items-center gap-4'>
-        <div className='flex gap-8'>
-          <Link href={'/category/brands-and-stores'}>
-                <button>Marcas y tiendas</button>
-              </Link>
-              <Link href={'/category/events'}>
-                <button>Artistas y conciertos</button>
-              </Link>
-              <Link href={'/category/music'}>
-                <button>Torneos</button>
-              </Link>
-        </div>
+        <div className='header-shadow w-full h-[114px] flex justify-around items-center gap-4'>
+        <div className="relative flex items-center justify-center gap-2">
+            <Link href={'/category/brands-and-stores'}>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                Marcas y tiendas
+              </button>
+            </Link>
+            <Link href={'/category/events'}>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                Artistas y conciertos
+              </button>
+            </Link>
+            <Link href={'/category/music'}>
+              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                Torneos
+              </button>
+            </Link>
+          </div>
             <input
             className="px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2"
             type="text"
@@ -75,17 +82,50 @@ export const CategoryPage: NextPageWithLayout = () => {
             ladygaga.com
           </Link>
 
-          <div className='flex gap-2 mt-3 ml-2'>
-            <p className='app-text-1 text-sm'>LOGO</p>
-            <p className='app-text-1 text-sm'>90,800,756 <span>votos</span> </p>
-          </div> 
+          <div className="flex gap-2 mt-2">
+            <User />
+            <p className="app-text-2 font-semibold mt-[4.4px]"> 999,789,000 votos</p>
+          </div>
           <button className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
             Votar
           </button>
         </div>
-        <div className='ml-4 lg:w-1/2 flex justify-center'>
+        <div className='lg:ml-4 lg:w-1/2 flex justify-center'>
           <img className='w-full' src="../../../mock-event-image.png" alt="" />
         </div>
+
+      </div>
+
+      <div className="relative  h-[250px] w-[941px] mx-auto bg-[#f8f7fa]">
+        <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
+          ¡Hagámoslo más personal!
+        </h2>
+        <p className="relative ml-12 top-8 app-subtitle-2 text-app-grayDark">
+          Selecciona tus interes para brindarte sugerencia de acuerdo a tus
+          gustos
+        </p>
+        <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px] py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Marcas y tiendas
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Artistas y conciertos
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Torneos
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Restaurantes
+          </button>
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+            Rock
+          </button>
+        </div>
+        <Link href={'todoslosinteres'}>
+          <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">
+            Ver todos los intereses
+          </p>
+        </Link>
       </div>
 
       <EventSlider title='Recientes' subtitle='Las personas ultimamente estan hablando de esto' events={events}  />
