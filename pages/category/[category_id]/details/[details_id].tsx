@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { User } from '../../../../components/assets/svg/User';
 import { Layout } from '../../../../components/layout/Layout';
 import { EventSlider } from '../../../../components/sliders/EventSlider/EventSlider';
+import HamburguerMenu from '../../../../lib/helpers/HamburguerMenu';
 import { CardEvent } from '../../../../lib/interfaces/cardEvent.interface';
 import { NextPageWithLayout } from '../../../page';
 export const CategoryPage: NextPageWithLayout = () => {
@@ -49,8 +50,11 @@ export const CategoryPage: NextPageWithLayout = () => {
   ];
   return (
     <div className=''>
-        <div className='header-shadow w-full h-[114px] flex justify-around items-center gap-4'>
-        <div className="relative flex items-center justify-center gap-2">
+       <div className='header-shadow w-full h-[114px] flex  items-center gap-4 mb-10 sm:justify-around xs:px-2 sm:px-0'>
+            <div className='w-60 xs:block sm:hidden'>
+              <HamburguerMenu />
+            </div>
+        <div className="relative sm:flex items-center justify-center gap-2 xs:hidden">
             <Link href={'/category/brands-and-stores'}>
               <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
                 Marcas y tiendas
@@ -68,13 +72,13 @@ export const CategoryPage: NextPageWithLayout = () => {
             </Link>
           </div>
             <input
-            className="px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2"
+            className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             type="text"
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
         </div>
-      <div className='app-container lg:flex mt-20 w-[80%] h-[500px] m-auto mb-20'>
-        <div className='lg:w-1/2'>
+      <div className='app-container sm:flex mt-20 w-[80%] h-[500px] m-auto mb-20'>
+        <div className='sm:w-1/2'>
           <h3 className='app-subtitle-1 mb-1'>Artista / pop - rock</h3> 
           <h2 className='app-title-1 mb-4'>Concierto De Lady Gaga</h2>
           <p className='app-text-1 text-app-grayDark mb-8'>El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.</p>
@@ -90,7 +94,7 @@ export const CategoryPage: NextPageWithLayout = () => {
             Votar
           </button>
         </div>
-        <div className='lg:ml-4 lg:w-1/2 flex justify-center'>
+        <div className='sm:ml-4 sm:w-1/2 flex justify-center'>
           <img className='w-full' src="../../../mock-event-image.png" alt="" />
         </div>
 

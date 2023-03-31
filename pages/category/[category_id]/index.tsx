@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout } from '../../../components/layout/Layout';
 import { EventSlider } from '../../../components/sliders/EventSlider/EventSlider';
+import HamburguerMenu from '../../../lib/helpers/HamburguerMenu';
 import { CardEvent } from '../../../lib/interfaces/cardEvent.interface';
 import { NextPageWithLayout } from '../../page';
 export const CategoryPage: NextPageWithLayout = () => {
@@ -49,14 +50,17 @@ export const CategoryPage: NextPageWithLayout = () => {
   return (
     <div>
         <div className='w-full h-52 bg-[url("/branch-and-stories.png")] bg-cover bg-center'>
-          <h3 className='relative top-8 ml-32 app-subtitle-1 text-white'>
-            Home / Marcas
+          <h3 className='relative xs:top-4 xs:ml-16 md:top-8 md:ml-32 app-subtitle-1 text-white'>
+            Home / {category_id}
           </h3>
-          <h2 className='relative top-10 ml-32 app-title-1 text-app-yellow'>{category_id}</h2>
-          <p className='relative top-10 ml-32 text-white app-subtitle-1'>Descubre las marcas y tiendas que la gente quiere cerca</p>
+          <h2 className='relative xs:top-5 xs:ml-16 md:top-10 md:ml-32 app-title-1 text-app-yellow'>{category_id}</h2>
+          <p className='relative xs:top-5 xs:ml-16 md:top-10 md:ml-32 text-white app-subtitle-1'>Descubre las marcas y tiendas que la gente quiere cerca</p>
         </div>
-        <div className='header-shadow w-full h-[114px] flex justify-around items-center gap-4 mb-10'>
-        <div className="relative flex items-center justify-center gap-2">
+        <div className='header-shadow w-full h-[114px] flex  items-center gap-4 mb-10 sm:justify-around xs:px-2 sm:px-0'>
+            <div className='w-60 xs:block sm:hidden'>
+              <HamburguerMenu />
+            </div>
+        <div className="relative sm:flex items-center justify-center gap-2 xs:hidden">
             <Link href={'/category/brands-and-stores'}>
               <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
                 Marcas y tiendas
@@ -74,7 +78,7 @@ export const CategoryPage: NextPageWithLayout = () => {
             </Link>
           </div>
             <input
-            className="px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2"
+            className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             type="text"
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
