@@ -59,7 +59,7 @@ const Home: NextPageWithLayout = () => {
         </div>
         <div className="flex flex-col gap-4">
           <input
-            className="px-6 py-4 rounded-3xl w-full sm:w-[465px]"
+            className='px-6 py-4 rounded-3xl w-full sm:w-[465px]  bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             type="text"
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
@@ -98,7 +98,7 @@ const Home: NextPageWithLayout = () => {
         />
       </div>
 
-      <div className="app-container relative flex-col h-[250px] w-[941px] bg-[#f8f7fa]">
+      <div className="relative  h-[250px] w-[941px] mx-auto bg-[#f8f7fa]">
         <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
           ¡Hagámoslo más personal!
         </h2>
@@ -106,20 +106,20 @@ const Home: NextPageWithLayout = () => {
           Selecciona tus interes para brindarte sugerencia de acuerdo a tus
           gustos
         </p>
-        <div className="flex gap-2 mx-2 mt-2">
-          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+        <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px] py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
             Marcas y tiendas
           </button>
-          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
             Artistas y conciertos
           </button>
-          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
             Torneos
           </button>
-          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
             Restaurantes
           </button>
-          <button className="relative top-10 left-7 bg-white px-5 py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
+          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
             Rock
           </button>
         </div>

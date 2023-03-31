@@ -5,16 +5,17 @@ import { NextPageWithLayout } from './page';
 
 const SignUp: NextPageWithLayout = () => {
   return (
-    <div className='min-h-[100vh] min-w-[100vw] bg-cover bg-center bg-no-repeat bg-[url("/login-banner.png")] flex justify-center items-center flex-col sm:flex-row gap-[17px] sm:gap-[0px] lg:gap-[208px] p-[18px]'>
+    <div className='background-opacity min-h-[100vh] min-w-[100vw] bg-cover bg-center bg-no-repeat bg-[url("/login-banner.png")] flex justify-center items-center flex-col sm:flex-row gap-[17px] sm:gap-[0px] lg:gap-[208px] p-[18px]'>
       <div className="relative w-[85px] h-[86px] sm:w-[70%] sm:h-[25vw] md:w-[47%] lg:w-[253px] lg:h-[250px]">
         <Image
+          className='z-50'
           src={'/sign_in-logo.png'}
           alt={'logo'}
           fill={true}
           style={{ objectFit: 'contain' }}
         />
       </div>
-      <div className="bg-black/70 min-h-[571px] w-[100%] max-w-[557px] pt-[18px] pl-[38px] pr-10 border-[1px] border-[#A7A6A7] rounded-[20px]">
+      <div className="z-50 bg-black/70 min-h-[571px] w-[100%] max-w-[557px] pt-[18px] pl-[38px] pr-10 border-[1px] border-[#A7A6A7] rounded-[20px]">
         <header className="text-white mb-6">
           <Exit />
           <h1 className="text-[32px] leading-5 mb-[13px]">Todos votamos :)</h1>
