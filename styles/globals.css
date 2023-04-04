@@ -38,6 +38,7 @@
   .app-banner {
     @apply w-screen m-auto relative left-[calc(-50vw_+_50%)];
   }
+
   .text-gradient {
     background: rgb(255, 255, 255);
     background: -moz-linear-gradient(
