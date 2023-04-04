@@ -12,7 +12,18 @@ const Post: NextPageWithLayout = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  type FormData = {
+    // Define los tipos de datos para el objeto FormData
+    // Por ejemplo:
+    title: string;
+    type: string;
+    category: string;
+    recomendation: string;
+    link: string;
+    //...
+  };
+
+  const onSubmit = (data: FormData) => {
     console.log(data);
     setStep(step + 1);
   };
