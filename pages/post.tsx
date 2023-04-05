@@ -10,7 +10,7 @@ const Post: NextPageWithLayout = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormData>();
 
   type FormData = {
     // Define los tipos de datos para el objeto FormData
