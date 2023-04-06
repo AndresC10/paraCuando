@@ -1,14 +1,21 @@
 import Link from 'next/link';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useRef, useState } from 'react';
+import { useForm} from 'react-hook-form';
 import { NextPageWithLayout } from './page';
 
 const Post: NextPageWithLayout = () => {
   const [step, setStep] = useState<number>(1);
+  const [imageURLs, setImageURLs] = useState<Array<string | null>>([null, null, null]);
+
+  const fileInputRef1 = useRef<HTMLInputElement>(null);
+  const fileInputRef2 = useRef<HTMLInputElement>(null);
+  const fileInputRef3 = useRef<HTMLInputElement>(null);
+
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -25,7 +32,38 @@ const Post: NextPageWithLayout = () => {
 
   const onSubmit = (data: FormData) => {
     console.log(data);
+    console.log(fileInputRef1.current?.files);
+    console.log(fileInputRef2.current?.files);
+    console.log(fileInputRef3.current?.files);
     setStep(step + 1);
+  };
+
+  const defaultValues = {
+    title: '',
+    type: '',
+    category: '',
+    recomendation: '',
+    link : ''
+  }
+
+  const handleBack = () => {
+    setStep(step - 1)
+    reset(defaultValues)
+  }
+
+
+
+  const handleFileChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newImageURLs = [...imageURLs];
+        newImageURLs[index] = reader.result as string;
+        setImageURLs(newImageURLs);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -68,14 +106,17 @@ const Post: NextPageWithLayout = () => {
           <>
             <button
               className="app-title-3 font-medium text-app-blue relative top-4 ml-4 sm:ml-10 sm:top-10"
-              onClick={() => setStep(step - 1)}
+              onClick={handleBack}
             >
               Back
             </button>
           </>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] sm:card-shadow rounded-2xl">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] sm:card-shadow rounded-2xl"
+        >
           {step === 1 ? (
             <>
               <div
@@ -149,11 +190,11 @@ const Post: NextPageWithLayout = () => {
                       Link De Referencia
                     </p>
                     <input
-                    {...register('link', { required: true })}
+                      {...register('link', { required: true })}
                       type="text"
                       className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
                       name="link"
-                      id='link'
+                      id="link"
                     />
                   </div>
                   <div className="flex items-center justify-center w-full mt-10">
@@ -181,12 +222,41 @@ const Post: NextPageWithLayout = () => {
                 <h3 className="app-subtitle-2 text-app-grayDark">
                   Selecciona máximo tres fotos para crear una galería
                 </h3>
-                <div className="w-full mt-4  w-[620px] h-[257px] border-[1px] rounded-2xl">
-                  
+                <div className="flex flex-row justify-around items-center mt-4 w-full h-[168px] sm:h-[257px] border-[1px] rounded-2xl">
+                <label
+                      htmlFor="archivo1"
+                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-44 md:h-52 sm:w-32 sm:h-44 w-24 h-28 rounded-2xl cursor-pointer"
+                    >
+                      <input onChange={(e) => handleFileChange(0, e)} type="file" id="archivo1" className="hidden" ref={fileInputRef1} />
+                      +
+                     {
+                      imageURLs[0] !== null ? <><p className='text-sm'>Imagen Guardada</p></> : <></>
+                     }
+                    </label>
+                    <label
+                      htmlFor="archivo2"
+                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-44 md:h-52 sm:w-32 sm:h-44 w-24 h-28 rounded-2xl cursor-pointer"
+                    >
+                      <input onChange={(e) => handleFileChange(1, e)} type="file" id="archivo2" className="hidden" ref={fileInputRef2} />
+                      +
+                      {
+                      imageURLs[1] !== null ? <><p className='text-sm'>Imagen Guardada</p></> : <></>
+                     }
+                    </label>
+                    <label
+                      htmlFor="archivo3"
+                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-44 md:h-52 sm:w-32 sm:h-44 w-24 h-28 rounded-2xl cursor-pointer"
+                    >
+                      <input onChange={(e) => handleFileChange(2, e)} type="file" id="archivo3" className="hidden" ref={fileInputRef3}   />
+                      +
+                      {
+                      imageURLs[2] !== null ? <><p className='text-sm'>Imagen Guardada</p></> : <><p className='hidden'></p></>
+                     }
+                    </label>
                 </div>
                 <div className="flex items-center justify-center w-full mt-10">
                   <button
-                    type='submit'
+                    type="submit"
                     className="app-subtitle-1 w-32 h-12 bg-app-blue rounded-full text-white"
                   >
                     Publicar
