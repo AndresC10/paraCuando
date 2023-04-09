@@ -56,6 +56,12 @@
     "tailwindcss": "^3.2.4",
     "ts-jest": "^29.0.5"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit",
+      "commit-msg": "npm run commitmsg"
+    }
+  },
   "main": "index.js",
   "repository": "https://github.com/AndresC10/paraCuando.git",
   "author": "OnilBlanco26 <onilblanco26@gmail.com>",
