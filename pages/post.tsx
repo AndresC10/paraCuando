@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { title, type, category, recomendation, link } from 'process';
 import { useRef, useState } from 'react';
 import { useForm} from 'react-hook-form';
 import { NextPageWithLayout } from './page';
@@ -31,12 +32,16 @@ const Post: NextPageWithLayout = () => {
   };
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
-    console.log(fileInputRef1.current?.files);
-    console.log(fileInputRef2.current?.files);
-    console.log(fileInputRef3.current?.files);
+    
     setStep(step + 1);
   };
+
+  const handleNext = () => {
+    if(title.includes('') || type.includes('') || category.includes('') || recomendation.includes('') || link.includes('')) {
+      return console.log('no puede estar vacio')
+    }
+    setStep(step + 1)
+  }
 
   const defaultValues = {
     title: '',
@@ -115,7 +120,7 @@ const Post: NextPageWithLayout = () => {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] sm:card-shadow rounded-2xl"
+          className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] rounded-2xl"
         >
           {step === 1 ? (
             <>
@@ -199,7 +204,7 @@ const Post: NextPageWithLayout = () => {
                   </div>
                   <div className="flex items-center justify-center w-full mt-10">
                     <button
-                      onClick={() => setStep(step + 1)}
+                      onClick={handleNext}
                       className="app-subtitle-1 w-32 h-12 bg-app-blue rounded-full text-white"
                     >
                       Siguiente
@@ -225,32 +230,32 @@ const Post: NextPageWithLayout = () => {
                 <div className="flex flex-row justify-around items-center mt-4 w-full h-[168px] sm:h-[257px] border-[1px] rounded-2xl">
                 <label
                       htmlFor="archivo1"
-                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-44 md:h-52 sm:w-32 sm:h-44 w-24 h-28 rounded-2xl cursor-pointer"
+                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
                     >
                       <input onChange={(e) => handleFileChange(0, e)} type="file" id="archivo1" className="hidden" ref={fileInputRef1} />
                       +
                      {
-                      imageURLs[0] !== null ? <><p className='text-sm'>Imagen Guardada</p></> : <></>
+                      imageURLs[0] !== null ? <><p className='text-sm text-center'>Imagen Guardada</p></> : <></>
                      }
                     </label>
                     <label
                       htmlFor="archivo2"
-                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-44 md:h-52 sm:w-32 sm:h-44 w-24 h-28 rounded-2xl cursor-pointer"
+                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
                     >
                       <input onChange={(e) => handleFileChange(1, e)} type="file" id="archivo2" className="hidden" ref={fileInputRef2} />
                       +
                       {
-                      imageURLs[1] !== null ? <><p className='text-sm'>Imagen Guardada</p></> : <></>
+                      imageURLs[1] !== null ? <><p className='text-sm text-center'>Imagen Guardada</p></> : <></>
                      }
                     </label>
                     <label
                       htmlFor="archivo3"
-                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-44 md:h-52 sm:w-32 sm:h-44 w-24 h-28 rounded-2xl cursor-pointer"
+                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
                     >
                       <input onChange={(e) => handleFileChange(2, e)} type="file" id="archivo3" className="hidden" ref={fileInputRef3}   />
                       +
                       {
-                      imageURLs[2] !== null ? <><p className='text-sm'>Imagen Guardada</p></> : <><p className='hidden'></p></>
+                      imageURLs[2] !== null ? <><p className='text-sm text-center'>Imagen Guardada</p></> : <><p className='hidden'></p></>
                      }
                     </label>
                 </div>
