@@ -5,11 +5,19 @@ import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
 import { useCategories } from '../lib/services/categories.services';
 import { NextPageWithLayout } from './page';
 import { CardEvent } from '../lib/interfaces/cardEvent.interface';
+import { usePublications } from '../lib/services/publications.services';
 
 const Home: NextPageWithLayout = () => {
-  const { data, error, isLoading } = useCategories();
 
-  console.log({ data, error, isLoading });
+  const {data: publicationResponse, error, isLoading} = usePublications();
+
+  const publications = publicationResponse?.results
+  console.log({publications})
+
+
+  // const { data, error, isLoading } = useCategories();
+
+  // console.log({ data, error, isLoading });
 
   const events: CardEvent[] = [
     {
@@ -83,13 +91,19 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
       {/* CONTENIDO */}
-      <div className="h-[72vh] mt-8">
-        <EventSlider
-          title="Populares en Querétaro"
-          subtitle="Lo que las personas piden más"
-          events={events}
-        />
-      </div>
+      {
+        publications?.map((publication) => {
+          return (
+            <div className="h-[72vh] mt-8" key={publication.id}>
+            <EventSlider
+              title={publication.title}
+              subtitle={publication.description}
+              events={}
+            />
+          </div>
+          );
+        })
+      }
       <div className="h-[72vh] mt-8">
         <EventSlider
           title="Sugerencias para ti"
