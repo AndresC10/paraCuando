@@ -2,9 +2,9 @@ import Link from 'next/link';
 import Logo from '../components/assets/logo/Logo';
 import { Layout } from '../components/layout/Layout';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
+import { CardEvent } from '../lib/interfaces/cardEvent.interface';
 import { useCategories } from '../lib/services/categories.services';
 import { NextPageWithLayout } from './page';
-import { CardEvent } from '../lib/interfaces/cardEvent.interface';
 
 const Home: NextPageWithLayout = () => {
   const { data, error, isLoading } = useCategories();
@@ -53,7 +53,7 @@ const Home: NextPageWithLayout = () => {
   return (
     <div>
       {/* HERO SECTION */}
-      <div className='min-h-[488px] flex justify-center items-center flex-col bg-[url("/hero-banner.png")] bg-cover bg-center app-banner -mt-4 gap-5'>
+      <div className='min-h-[488px] flex justify-center items-center flex-col bg-[url("/hero-banner.png")] bg-cover bg-center app-banner gap-5'>
         <div>
           <Logo />
         </div>
