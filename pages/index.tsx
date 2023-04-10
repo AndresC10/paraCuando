@@ -98,7 +98,7 @@ const Home: NextPageWithLayout = () => {
             <EventSlider
               title={publication.title}
               subtitle={publication.description}
-              events={}
+              events={events}
             />
           </div>
           );

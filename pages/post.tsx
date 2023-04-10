@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { title, type, category, recomendation, link } from 'process';
+import { title} from 'process';
 import { useRef, useState } from 'react';
 import { useForm} from 'react-hook-form';
 import { NextPageWithLayout } from './page';
@@ -37,7 +37,7 @@ const Post: NextPageWithLayout = () => {
   };
 
   const handleNext = () => {
-    if(title.includes('') || type.includes('') || category.includes('') || recomendation.includes('') || link.includes('')) {
+    if(title.includes('')) {
       return console.log('no puede estar vacio')
     }
     setStep(step + 1)
