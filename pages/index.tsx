@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Logo from '../components/assets/logo/Logo';
 import { Layout } from '../components/layout/Layout';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
-import { CardEvent } from '../lib/interfaces/cardEvent.interface';
 import { useCategories } from '../lib/services/categories.services';
 import { NextPageWithLayout } from './page';
 import { CardEvent } from '../lib/interfaces/cardEvent.interface';
