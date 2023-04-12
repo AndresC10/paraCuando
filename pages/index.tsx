@@ -11,52 +11,20 @@ const Home: NextPageWithLayout = () => {
 
   const {data: publicationResponse, error, isLoading} = usePublications();
 
-  const publications = publicationResponse?.results
-  console.log({publications})
+  const publications = publicationResponse?.results?.results
+
+  const img = publicationResponse?.results?.results[2].images[0].image_url
 
 
-  // const { data, error, isLoading } = useCategories();
+  // const publicationToCardEvent = (publication) =>({
+  //   imageUrl: img,
+  //   name: publication.title,
+  //   description: publication.description,
+  //   url: publication.reference_link,
+  //   votos: publication.votes_count
+  // })
 
-  // console.log({ data, error, isLoading });
-
-  const events: CardEvent[] = [
-    {
-      imageUrl: './mock-event-image.png',
-      name: 'Concierto de Lady Gaga',
-      description:
-        ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
-      url: './category/1/details/1',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 2',
-      description: 'Descripción del evento 2',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 3',
-      description: 'Descripción del evento 3',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 4',
-      description: 'Descripción del evento 4',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 5',
-      description: 'Descripción del evento 5',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-  ];
+  // const cardEvents = publications?.map(publicationToCardEvent) || [];
 
   return (
     <div>
@@ -92,25 +60,17 @@ const Home: NextPageWithLayout = () => {
       </div>
       {/* CONTENIDO */}
       {
-        publications?.map((publication) => {
-          return (
-            <div className="h-[72vh] mt-8" key={publication.id}>
-            <EventSlider
-              title={publication.title}
-              subtitle={publication.description}
-              events={events}
-            />
-          </div>
-          );
-        })
+       
+           
+        
       }
-      <div className="h-[72vh] mt-8">
+      {/* <div className="h-[72vh] mt-8">
         <EventSlider
           title="Sugerencias para ti"
           subtitle="Publicaciones que podrías colaborar"
-          events={events}
+          events={cardEvents}
         />
-      </div>
+      </div> */}
 
       <div className="relative  h-[250px] w-[941px] mx-auto bg-[#f8f7fa]">
         <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
@@ -144,13 +104,13 @@ const Home: NextPageWithLayout = () => {
         </Link>
       </div>
 
-      <div className="h-[72vh] mt-8">
+      {/* <div className="h-[72vh] mt-8">
         <EventSlider
           title="Recientes"
           subtitle="Las personas últimanete están hablando de esto"
-          events={events}
+          events={cardEvents}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
