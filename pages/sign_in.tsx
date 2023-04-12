@@ -1,9 +1,26 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Exit } from '../components/assets/svg/Exit';
 import { NextPageWithLayout } from './page';
 
 const SignIn: NextPageWithLayout = () => {
+  const { register, reset, handleSubmit } = useForm<FormValues>();
+
+  type FormValues = {
+    email: string;
+    password: string;
+  };
+
+  const submit: SubmitHandler<FormValues> = (data) => {
+    console.log(data);
+
+    reset({
+      email: '',
+      password: '',
+    });
+  };
+
   return (
     <div className='background-opacity min-h-[100vh] min-w-[100vw] bg-cover bg-center bg-no-repeat bg-[url("/login-banner.png")] flex justify-center items-center flex-col sm:flex-row gap-[17px] sm:gap-[0px] lg:gap-[208px] p-[18px]'>
       <div className="relative w-[85px] h-[86px] sm:w-[70%] sm:h-[25vw] md:w-[47%] lg:w-[253px] lg:h-[250px]">
@@ -25,7 +42,10 @@ const SignIn: NextPageWithLayout = () => {
             Inicie sesión con los datos que ingresó durante su registro.
           </h2>
         </header>
-        <main className="grid grid-cols-1 gap-2">
+        <form
+          className="grid grid-cols-1 gap-2"
+          onSubmit={handleSubmit(submit)}
+        >
           <div className="w-[100%]">
             <label
               className="text-white font-semibold flex flex-col"
@@ -36,7 +56,8 @@ const SignIn: NextPageWithLayout = () => {
             <input
               type="text"
               id="email"
-              className="text-[16px] leading-6 font-normal font-Inter outline-0 text-white w-[100%] h-12 mt-1 bg-black/0 border-[1px] border-white rounded-md pl-4"
+              className="text-[16px] leading-6 font-normal font-Inter outline-0 text-white w-[100%] h-12 mt-1 bg-black/0 border-[1px] border-white rounded-md pl-4 "
+              {...register('email')}
             />
           </div>
           <div className="w-[100%] col-span-2">
@@ -50,6 +71,7 @@ const SignIn: NextPageWithLayout = () => {
               type="password"
               id="password"
               className="text-[16px] leading-6 font-normal font-Inter outline-0 text-white w-[100%] h-12 mt-1 bg-black/0 border-[1px] border-white rounded-md pl-4"
+              {...register('password')}
             />
             <div className="flex h-10 gap-1 mt-2 md:justify-center ">
               <span className="text-[40px] text-[#D9D9D9] rotate-180 translate-y-3 h-10 md:hidden ">
@@ -77,7 +99,7 @@ const SignIn: NextPageWithLayout = () => {
               O inicia sesión
             </Link>
           </div>
-        </main>
+        </form>
       </div>
     </div>
   );
