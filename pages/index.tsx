@@ -5,7 +5,8 @@ import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
 import { CardEvent } from '../lib/interfaces/cardEvent.interface';
 import { useCategories } from '../lib/services/categories.services';
 import { NextPageWithLayout } from './page';
-
+import { CardEvent } from '../lib/interfaces/cardEvent.interface';
+import { usePublications } from '../lib/services/publications.services'; 
 
 const Home: NextPageWithLayout = () => {
 
