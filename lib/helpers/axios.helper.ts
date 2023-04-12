@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import Cookie from 'js-cookie';
+import Cookie from 'js-cookie';
 import getConfig from 'next/config';
 import Router from 'next/router';
 
@@ -31,5 +31,5 @@ export default instance;
 
 async function getTokenFromCookie() {
   return null;
-  // return Cookie.get('token');
+  return Cookie.get('token');
 }
