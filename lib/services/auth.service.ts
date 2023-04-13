@@ -1,4 +1,4 @@
-import axios from '../helpers/axios.helper.';
+import axios from '../helpers/axios.helper';
 
 import { User } from '../interfaces/user.interface';
 

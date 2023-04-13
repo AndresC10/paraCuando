@@ -2,15 +2,16 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  
   if (process.env.NODE_ENV === 'development') {
     return NextResponse.next();
   }
 
   const jwt = request.cookies.get('token');
   if (!jwt) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/sign_in', request.url));
   }
-
+  return NextResponse.next();
   // try {
   //   const { payload } = await jwtVerify(
   //     jwt.value,
@@ -24,5 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/profile/:path*', '/create-event'],
+  matcher: ['/profile/:path*', '/post'],
 };
