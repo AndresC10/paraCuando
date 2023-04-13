@@ -7,7 +7,7 @@ interface EventCardProps {
   name: string;
   description: string;
   url: string;
-  votos: string;
+  votos: number;
 }
 
 const EventCard: FC<EventCardProps> = ({
