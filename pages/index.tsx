@@ -3,33 +3,55 @@ import Logo from '../components/assets/logo/Logo';
 import { Layout } from '../components/layout/Layout';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
 import { NextPageWithLayout } from './page';
-import { usePublications } from '../lib/services/publications.services'; 
-import { publicationToCardEvent, sortPublicationsByDate, sortPublicationsBySuggestion, sortPublicationsByVotes } from '../lib/helpers/Publications.helper';
+import { usePublications } from '../lib/services/publications.services';
+import {
+  publicationToCardEvent,
+  sortPublicationsByDate,
+  sortPublicationsBySuggestion,
+  sortPublicationsByVotes,
+} from '../lib/helpers/Publications.helper';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 const Home: NextPageWithLayout = () => {
+  const [categories, setCategories] = useState<any>([]);
+  const token = Cookies.get('token');
 
-  const {data: publicationResponse, error, isLoading} = usePublications();
+  useEffect(() => {
+    axios
+      .get(
+        `https://paracuando-academlo-api.academlo.tech/api/v1/publications-types/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        setCategories(response.data.results.results);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
-  const publications = publicationResponse?.results.results
+  console.log(categories);
 
-  interface PublicationImage {
-    image_url: string;
-  }
-  
-  interface Publication {
-    id: string;
-    images: PublicationImage[];
-    title: string;
-    description: string;
-    reference_link: string;
-    votes_count: number;
-    publication_type_id: number;
-    created_at: string;
-  }
+  const { data: publicationResponse, error, isLoading } = usePublications();
 
-  const cardEventsSort = sortPublicationsByVotes(publications || []).map(publicationToCardEvent) || [];
-  const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
-  const cardEventsSortBySuggestion = sortPublicationsBySuggestion(publications || []).map(publicationToCardEvent) || [];
+  const publications = publicationResponse?.results.results;
+
+  const cardEventsSort =
+    sortPublicationsByVotes(publications || []).map(publicationToCardEvent) ||
+    [];
+  const cardEventsSortByDate =
+    sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
+    [];
+  const cardEventsSortBySuggestion =
+    sortPublicationsBySuggestion(publications || []).map(
+      publicationToCardEvent
+    ) || [];
 
   return (
     <div>
@@ -45,21 +67,15 @@ const Home: NextPageWithLayout = () => {
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
           <div className="relative flex items-center justify-center gap-2">
-            <Link href={`/category/`}>
-              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
-                Marcas y tiendas
-              </button>
-            </Link>
-            <Link href={'/category/events'}>
-              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
-                Artistas y conciertos
-              </button>
-            </Link>
-            <Link href={'/category/music'}>
-              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
-                Torneos
-              </button>
-            </Link>
+            {categories?.map((item: any) => {
+              return (
+                <Link href={`/category/${item.id}`} key={item.id}>
+                  <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                    {item.name}
+                  </button>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -72,7 +88,6 @@ const Home: NextPageWithLayout = () => {
         />
       </div>
 
-   
       <div className="h-[72vh] mt-8">
         <EventSlider
           title="Sugerencias para ti"

@@ -32,7 +32,7 @@ const Header = () => {
         {!token && (
           <>
             <Link href={'/sign_in'} className="hidden md:block">
-              <button>Log Ing</button>
+              <button>Log In</button>
             </Link>
             <Link href={'/sign_up'} className="hidden md:block">
               <button>Sign Up</button>
