@@ -1,6 +1,7 @@
-import { CardEvent } from '../..//lib/interfaces/cardEvent.interface';
 import { Layout } from '../../components/layout/Layout';
 import EventCard from '../../components/sliders/EventSlider/EventCard';
+import { CardEvent } from '../../lib/interfaces/cardEvent.interface';
+import { useUserMe } from '../../lib/services/userMe.services';
 import { NextPageWithLayout } from '../page';
 export const CategoryPage: NextPageWithLayout = () => {
   const events: CardEvent[] = [
@@ -42,10 +43,19 @@ export const CategoryPage: NextPageWithLayout = () => {
     },
   ];
 
+  const { data } = useUserMe();
+
   return (
     <>
       <div className="w-[100%] h-[129px] bg-[#1B4DB1] flex justify-center">
-        <div className="w-[117px] h-[117px] rounded-full bg-white translate-y-[70.5px]"></div>
+        <div
+          className={`w-[117px] h-[117px] rounded-full translate-y-[70.5px] `}
+          style={
+            data
+              ? { backgroundImage: `url(${data?.image_url})` }
+              : { backgroundColor: 'white' }
+          }
+        ></div>
       </div>
       <div className="bg-[#ECE6E6] pt-[82px]">
         <div className="w-[100%] flex justify-center gap-3">
