@@ -10,7 +10,7 @@ export const CategoryPage: NextPageWithLayout = () => {
       description:
         ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
       url: './category/1/details/1',
-      votos: '90,800,756',
+      votos: 1,
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
