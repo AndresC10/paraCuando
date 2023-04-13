@@ -1,4 +1,4 @@
-import { CardEvent } from '../..//lib/interfaces/cardEvent.interface';
+import { CardEvent } from '../../lib/interfaces/cardEvent.interface';
 import { Layout } from '../../components/layout/Layout';
 import EventCard from '../../components/sliders/EventSlider/EventCard';
 import { NextPageWithLayout } from '../page';
