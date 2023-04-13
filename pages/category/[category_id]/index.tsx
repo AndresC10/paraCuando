@@ -3,50 +3,24 @@ import { useRouter } from 'next/router';
 import { Layout } from '../../../components/layout/Layout';
 import { EventSlider } from '../../../components/sliders/EventSlider/EventSlider';
 import HamburguerMenu from '../../../lib/helpers/HamburguerMenu';
-import { CardEvent } from '../../../lib/interfaces/cardEvent.interface';
 import { NextPageWithLayout } from '../../page';
+import { publicationToCardEvent, sortPublicationsByVotes, sortPublicationsByDate, sortPublicationsBySuggestion } from '../../../lib/helpers/Publications.helper';
+import { usePublications } from '../../../lib/services/publications.services';
+
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { category_id } = router.query;
+
+  const {data: publicationResponse, error, isLoading} = usePublications();
+
+  const publications = publicationResponse?.results.results
+
+  const cardEventsSortByVotes = sortPublicationsByVotes(publications || []).map(publicationToCardEvent) || [];
+  const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
+  const cardEventsSortBySuggestion = sortPublicationsBySuggestion(publications || []).map(publicationToCardEvent) || [];
+
   
-  const events: CardEvent[] = [
-    {
-      imageUrl: '../../../mock-event-image.png',
-      name: 'Concierto de Lady Gaga',
-      description:
-        ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
-      url: './category/1/details/1',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 2',
-      description: 'Descripción del evento 2',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 3',
-      description: 'Descripción del evento 3',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 4',
-      description: 'Descripción del evento 4',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 5',
-      description: 'Descripción del evento 5',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-  ];
+  
   return (
     <div>
         <div className='w-full h-52 bg-[url("/branch-and-stories.png")] bg-cover bg-center'>
@@ -84,8 +58,8 @@ export const CategoryPage: NextPageWithLayout = () => {
           />
         </div>
 
-        <EventSlider title='Populares en Queretaro' subtitle='Lo que las personas piden mas' events={events}/>
-        <EventSlider title='Sugerencias para ti' subtitle='Publicaciones que podrian colaborar' events={events}/>
+        <EventSlider title='Populares en Queretaro' subtitle='Lo que las personas piden mas' events={cardEventsSortByVotes}/>
+        <EventSlider title='Sugerencias para ti' subtitle='Publicaciones que podrian colaborar' events={cardEventsSortBySuggestion}/>
         <div className="relative  h-[250px] w-[941px] mx-auto mt-20 mb-20 bg-[#f8f7fa]">
         <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
           ¡Hagámoslo más personal!
@@ -117,7 +91,7 @@ export const CategoryPage: NextPageWithLayout = () => {
           </p>
         </Link>
       </div>
-      <EventSlider title='Recientes' subtitle='Las personas ultimamente estan hablando de esto' events={events} />
+      <EventSlider title='Recientes' subtitle='Las personas ultimamente estan hablando de esto' events={cardEventsSortByDate} />
     </div>
   );
 };

@@ -60,6 +60,15 @@ const Post: NextPageWithLayout = () => {
 
   const handleFileChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
+    if(!file) {
+      console.log('No file provided')
+      return;
+    }
+    const urlFile = URL.createObjectURL(file);
+    const urlFile2 = URL.createObjectURL(file);
+    const urlFile3 = URL.createObjectURL(file);
+    setImageURLs([urlFile, urlFile2, urlFile3])
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -230,33 +239,49 @@ const Post: NextPageWithLayout = () => {
                 <div className="flex flex-row justify-around items-center mt-4 w-full h-[168px] sm:h-[257px] border-[1px] rounded-2xl">
                 <label
                       htmlFor="archivo1"
-                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                      className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                      style={
+                        imageURLs[0]
+                          ? { backgroundImage: `url(${imageURLs[0]})` }
+                          : { backgroundColor: '' }
+                      }
                     >
                       <input onChange={(e) => handleFileChange(0, e)} type="file" id="archivo1" className="hidden" ref={fileInputRef1} />
-                      +
-                     {
-                      imageURLs[0] !== null ? <><p className='text-sm text-center'>Imagen Guardada</p></> : <></>
-                     }
+                      {
+                        !imageURLs[0]
+                         && <p>+</p>
+                      }
+                    
                     </label>
                     <label
                       htmlFor="archivo2"
-                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                      className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                      style={
+                        imageURLs[1]
+                          ? { backgroundImage: `url(${imageURLs[1]})` }
+                          : { backgroundColor: '' }
+                      }
                     >
                       <input onChange={(e) => handleFileChange(1, e)} type="file" id="archivo2" className="hidden" ref={fileInputRef2} />
-                      +
                       {
-                      imageURLs[1] !== null ? <><p className='text-sm text-center'>Imagen Guardada</p></> : <></>
-                     }
+                        !imageURLs[1]
+                         && <p>+</p>
+                      }
                     </label>
                     <label
                       htmlFor="archivo3"
-                      className="flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                      className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                      style={
+                        imageURLs[2]
+                          ? { backgroundImage: `url(${imageURLs[2]})` }
+                          : { backgroundColor: '' }
+                      }
                     >
                       <input onChange={(e) => handleFileChange(2, e)} type="file" id="archivo3" className="hidden" ref={fileInputRef3}   />
-                      +
                       {
-                      imageURLs[2] !== null ? <><p className='text-sm text-center'>Imagen Guardada</p></> : <><p className='hidden'></p></>
-                     }
+                        !imageURLs[2]
+                         && <p>+</p>
+                      }
                     </label>
                 </div>
                 <div className="flex items-center justify-center w-full mt-10">

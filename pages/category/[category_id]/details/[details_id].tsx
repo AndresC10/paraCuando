@@ -4,52 +4,49 @@ import { User } from '../../../../components/assets/svg/User';
 import { Layout } from '../../../../components/layout/Layout';
 import { EventSlider } from '../../../../components/sliders/EventSlider/EventSlider';
 import HamburguerMenu from '../../../../lib/helpers/HamburguerMenu';
-import { CardEvent } from '../../../../lib/interfaces/cardEvent.interface';
 import { NextPageWithLayout } from '../../../page';
+import { useEffect, useState } from 'react';
+import { publicationToCardEvent, sortPublicationsByDate } from '../../../../lib/helpers/Publications.helper';
+import { usePublications } from '../../../../lib/services/publications.services';
+
+
+
+
 export const CategoryPage: NextPageWithLayout = () => {
+
   const router = useRouter();
   const { details_id } = router.query;
+  const [publication, setPublication] = useState<any>([]);
+  const {title, description, reference_link, votes_count, publication_type: { name = 'Default' } = {}, images} = publication;
+  const firstImage = images?.[0]?.image_url || '';
 
-  const events: CardEvent[] = [
-    {
-      imageUrl: '../../../mock-event-image.png',
-      name: 'Concierto de Lady Gaga',
-      description:
-        ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
-      url: './category/1/details/1',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 2',
-      description: 'Descripción del evento 2',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 3',
-      description: 'Descripción del evento 3',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 4',
-      description: 'Descripción del evento 4',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 5',
-      description: 'Descripción del evento 5',
-      url: 'ladygaga.com',
-      votos: '90,800,756',
-    },
-  ];
+  const {data: publicationResponse, error, isLoading} = usePublications();
+
+  const publications = publicationResponse?.results.results
+
+  interface PublicationImage {
+    image_url: string;
+  }
+  
+  interface Publication {
+    id: string;
+    images: PublicationImage[];
+    title: string;
+    description: string;
+    reference_link: string;
+    votes_count: number;
+    publication_type_id: number;
+    created_at: string;
+  }
+
+  useEffect(() => {
+    setPublication(publications?.find((publication: Publication) => publication.id === details_id))
+  }, [details_id])
+
+  const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
+
   return (
-    <div className=''>
+    <div className='flex flex-col justify-center items-center'>
        <div className='header-shadow w-full h-[114px] flex  items-center gap-4 mb-10 sm:justify-around xs:px-2 sm:px-0'>
             <div className='w-60 xs:block sm:hidden'>
               <HamburguerMenu />
@@ -77,30 +74,33 @@ export const CategoryPage: NextPageWithLayout = () => {
             placeholder="¿Qué quieres ver en tu ciudad?"
           />
         </div>
-      <div className='app-container sm:grid grid-cols-12 mt-20 w-[80%] h-[500px] m-auto mb-20'>
-        <div className='sm: col-span-4'>
-          <h3 className='app-subtitle-1 mb-1'>Artista / pop - rock</h3> 
-          <h2 className='app-title-1 mb-4'>Concierto De Lady Gaga</h2>
-          <p className='app-text-1 text-app-grayDark mb-8'>El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.</p>
-          <Link className='text-app-blue app-text-1 text-sm' href={'/category/events'}>
-            ladygaga.com
+      <div className='app-container sm:grid grid-cols-8 grid-rows-6 mt-20 w-full max-w-[1000px] h-[450px] mx-4 mb-72 sm:mb-20'>
+        <div className='sm: col-span-4 row-span-5 sm:grid grid-rows-6'>
+          <h3 className='app-subtitle-1 mb-1 mt-4'>{name}</h3> 
+          <h2 className='app-title-1 mb-4'>{title}</h2>
+          <div className='flex items-center mb-8 mt-4 row-start-3 row-end-5'>
+          <p className='app-text-1 text-app-grayDark'>{description}</p>
+          </div>
+          <Link className='text-app-blue app-text-1 text-sm mt-4' href={'/category/events'}>
+            {reference_link}
           </Link>
 
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2 mt-2 ml-2 mb-4">
             <User />
-            <p className="app-text-2 font-semibold mt-[4.4px]"> 999,789,000 votos</p>
+            <p className="app-text-2 font-semibold mt-[4.4px]"> {votes_count} votos</p>
           </div>
-          <button className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
+        </div>
+        <div className='sm:ml-4 sm:col-span-4 sm:row-span-6 min-w-[300px] flex justify-center'>
+          <img className='w-full h-96 sm:h-auto' src={firstImage} alt="" />
+        </div>
+        <div className='sm:col-span-4 sm:row-start-6 sm:row-end-6'>
+        <button className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
             Votar
           </button>
         </div>
-        <div className='sm:ml-4 sm:col-span-4 flex justify-center'>
-          <img className='w-full' src="../../../mock-event-image.png" alt="" />
-        </div>
-
       </div>
 
-      <div className="relative  h-[250px] w-[941px] mx-auto bg-[#f8f7fa]">
+      <div className="relative  h-[250px] w-[941px] mx-auto mb-20 bg-[#f8f7fa]">
         <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
           ¡Hagámoslo más personal!
         </h2>
@@ -132,7 +132,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         </Link>
       </div>
 
-      <EventSlider title='Recientes' subtitle='Las personas ultimamente estan hablando de esto' events={events}  />
+      <EventSlider title='Recientes' subtitle='Las personas ultimamente estan hablando de esto' events={cardEventsSortByDate}  />
     </div>
   );
 };

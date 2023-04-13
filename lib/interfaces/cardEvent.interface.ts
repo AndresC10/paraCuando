@@ -3,5 +3,5 @@ export interface CardEvent {
   name: string;
   description: string;
   url: string;
-  votos: string;
+  votos: number;
 }
