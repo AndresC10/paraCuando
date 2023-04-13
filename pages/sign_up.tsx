@@ -54,18 +54,18 @@ const SignUp: NextPageWithLayout = () => {
   };
 
   const onError = (err: AxiosError) => {
-    if (err.response.status === 401) {
+    if (err.response?.status === 401) {
       setError('password', { message: 'error' });
       setError('email', { message: 'check' });
       setError('first_name', { message: 'check' });
       setError('last_name', { message: 'check' });
     }
-    if (err.response.status === 404) {
+    if (err.response?.status === 404) {
       setError('email', { message: 'error message' });
       setError('first_name', { message: 'check' });
       setError('last_name', { message: 'check' });
     }
-    if (err.response.status === 409) {
+    if (err.response?.status === 409) {
       setError('email', { message: 'error message' });
     }
   };
