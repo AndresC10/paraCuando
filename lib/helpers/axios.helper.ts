@@ -30,6 +30,5 @@ instance.interceptors.request.use(
 export default instance;
 
 async function getTokenFromCookie() {
-  return null;
   return Cookie.get('token');
 }
