@@ -8,7 +8,8 @@ import { NextPageWithLayout } from '../../../page';
 import { useEffect, useState } from 'react';
 import { publicationToCardEvent, sortPublicationsByDate } from '../../../../lib/helpers/Publications.helper';
 import { usePublications } from '../../../../lib/services/publications.services';
-
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 
 
@@ -16,9 +17,14 @@ export const CategoryPage: NextPageWithLayout = () => {
 
   const router = useRouter();
   const { details_id } = router.query;
+  const [categories, setCategories] = useState<any>([]);
+  const token = Cookies.get('token');
   const [publication, setPublication] = useState<any>([]);
-  const {title, description, reference_link, votes_count, publication_type: { name = 'Default' } = {}, images} = publication;
+  
+  const {title, description, reference_link, votes_count, publication_type: { name: publicationName = 'Default' } = {}, images, tags} = publication;
   const firstImage = images?.[0]?.image_url || '';
+  const tagsArray = tags?.map((tag: any) => tag.name) || [];
+ 
 
   const {data: publicationResponse, error, isLoading} = usePublications();
 
@@ -41,6 +47,21 @@ export const CategoryPage: NextPageWithLayout = () => {
 
   useEffect(() => {
     setPublication(publications?.find((publication: Publication) => publication.id === details_id))
+    axios
+    .get(
+      `https://paracuando-academlo-api.academlo.tech/api/v1/publications-types/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => {
+      setCategories(response.data.results.results);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }, [details_id])
 
   const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
@@ -52,21 +73,15 @@ export const CategoryPage: NextPageWithLayout = () => {
               <HamburguerMenu />
             </div>
         <div className="relative sm:flex items-center justify-center gap-2 xs:hidden">
-            <Link href={'/category/brands-and-stores'}>
-              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
-                Marcas y tiendas
-              </button>
-            </Link>
-            <Link href={'/category/events'}>
-              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
-                Artistas y conciertos
-              </button>
-            </Link>
-            <Link href={'/category/music'}>
-              <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
-                Torneos
-              </button>
-            </Link>
+        {categories?.map((item: any) => {
+            return (
+              <Link href={`/category/${item.id}`} key={item.id}>
+                <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                  {item.name}
+                </button>
+              </Link>
+            );
+          })}
           </div>
             <input
             className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
@@ -76,7 +91,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         </div>
       <div className='app-container sm:grid grid-cols-8 grid-rows-6 mt-20 w-full max-w-[1000px] h-[450px] mx-4 mb-72 sm:mb-20'>
         <div className='sm: col-span-4 row-span-5 sm:grid grid-rows-6'>
-          <h3 className='app-subtitle-1 mb-1 mt-4'>{name}</h3> 
+          <h3 className='app-subtitle-1 mb-1 mt-4'>{`${publicationName} / ${tagsArray}`}</h3> 
           <h2 className='app-title-1 mb-4'>{title}</h2>
           <div className='flex items-center mb-8 mt-4 row-start-3 row-end-5'>
           <p className='app-text-1 text-app-grayDark'>{description}</p>

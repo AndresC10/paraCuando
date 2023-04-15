@@ -51,11 +51,11 @@ const SignIn: NextPageWithLayout = () => {
   };
 
   const onError = (err: AxiosError) => {
-    if (err.response.status === 401) {
+    if (err.response?.status === 401) {
       setError('password', { message: 'error' });
       setError('email', { message: 'check' });
     }
-    if (err.response.status === 404) {
+    if (err.response?.status === 404) {
       setError('email', { message: 'error message' });
     }
     console.log(err);

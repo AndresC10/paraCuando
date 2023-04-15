@@ -16,7 +16,7 @@ type FormValues = {
 
 export const ConfigPage: NextPageWithLayout = () => {
   const { data } = useUserMe();
-  const { data: userData } = useSWR(() => '/users/' + data.id);
+  const { data: userData } = useSWR(() => (data && data.id ? '/users/' + data.id : null));
 
   const { register, handleSubmit, getValues } = useForm<FormValues>({
     defaultValues: {
@@ -28,17 +28,28 @@ export const ConfigPage: NextPageWithLayout = () => {
 
   const [profileImg, setProfileImg] = useState<string>();
 
+  const getImageUrl = () => {
+    const imageURL = getValues('image_url');
+    if (imageURL && imageURL.length > 0) {
+      return URL.createObjectURL(imageURL[0]);
+    } else {
+      return 'default_image_url';
+    }
+  };
+  
+
+
   const submit = (fdata: FormValues) => {
     const imageData = new FormData();
 
-    imageData.append('image_url', [fdata.image_url[0], 'perro.jpg']);
+    imageData.append('image_url', fdata.image_url ? [fdata.image_url[0], 'perro.jpg'] : ['default_image_url', 'perro.jpg']);
     axios
-      .put(`/users/${data.id}`, fdata)
+      .put(`/users/${data?.id}`, fdata)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
     if (userData?.results.image_url !== profileImg) {
       axios
-        .post(`/users/${data.id}/add-image`, imageData)
+        .post(`/users/${data?.id}/add-image`, imageData)
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
       console.log(imageData);
@@ -79,7 +90,7 @@ export const ConfigPage: NextPageWithLayout = () => {
                   {...register('image_url', {
                     onChange() {
                       setProfileImg(
-                        URL.createObjectURL(getValues('image_url')[0])
+                       getImageUrl()
                       );
                     },
                   })}

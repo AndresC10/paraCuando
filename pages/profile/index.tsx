@@ -11,35 +11,35 @@ export const CategoryPage: NextPageWithLayout = () => {
       description:
         ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
       url: './category/1/details/1',
-      votos: '90,800,756',
+      votos: 1,
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
       name: 'Evento 2',
       description: 'Descripción del evento 2',
       url: 'ladygaga.com',
-      votos: '90,800,756',
+      votos: 1,
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
       name: 'Evento 3',
       description: 'Descripción del evento 3',
       url: 'ladygaga.com',
-      votos: '90,800,756',
+      votos: 1,
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
       name: 'Evento 4',
       description: 'Descripción del evento 4',
       url: 'ladygaga.com',
-      votos: '90,800,756',
+      votos: 1,
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
       name: 'Evento 5',
       description: 'Descripción del evento 5',
       url: 'ladygaga.com',
-      votos: '90,800,756',
+      votos: 1,
     },
   ];
 
