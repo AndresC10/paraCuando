@@ -3,9 +3,9 @@ import { NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   return NextResponse.next();
+  // }
 
   const jwt = request.cookies.get('token');
   if (!jwt) {

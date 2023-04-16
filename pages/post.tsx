@@ -1,17 +1,41 @@
 import Link from 'next/link';
-import { title} from 'process';
+import { title } from 'process';
 import { useRef, useState } from 'react';
-import { useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { NextPageWithLayout } from './page';
+import {
+  createPublication,
+  useTags,
+} from '../lib/services/publications.services';
+import { usePublicationsTypes } from '../lib/services/publications-types.services';
 
 const Post: NextPageWithLayout = () => {
   const [step, setStep] = useState<number>(1);
-  const [imageURLs, setImageURLs] = useState<Array<string | null>>([null, null, null]);
+  const [imageURLs, setImageURLs] = useState<Array<string | null>>([
+    null,
+    null,
+    null,
+  ]);
 
   const fileInputRef1 = useRef<HTMLInputElement>(null);
   const fileInputRef2 = useRef<HTMLInputElement>(null);
   const fileInputRef3 = useRef<HTMLInputElement>(null);
 
+  const {
+    data: publicationsTypesResponse,
+    error: errorPublicationsTypes,
+    isLoading: isLoadingPublicationsTypes,
+  } = usePublicationsTypes();
+  const {
+    data: tagsResponse,
+    error: errorTags,
+    isLoading: isLoadingTags,
+  } = useTags();
+
+  const publicationsTypes = publicationsTypesResponse?.results.results;
+  const tags = tagsResponse?.results.results;
+
+  // https://paracuando-academlo-api.academlo.tech/api/v1/publications
 
   const {
     register,
@@ -24,51 +48,84 @@ const Post: NextPageWithLayout = () => {
     // Define los tipos de datos para el objeto FormData
     // Por ejemplo:
     title: string;
-    type: string;
-    category: string;
-    recomendation: string;
-    link: string;
+    description: string;
+    content: string;
+    reference_link: string;
+    publication_type_id: string;
+    tags: string;
     //...
   };
 
-  const onSubmit = (data: FormData) => {
-    
-    setStep(step + 1);
+  const onSubmit = async (data: any) => {
+    try {
+      const formData = new FormData();
+
+      formData.append('title', 'Prueba 8');
+      formData.append('description', 'description prueba 7');
+      formData.append('content', 'content prueba 7');
+      formData.append('reference_link', 'reference_link prueba 7');
+      formData.append('publication_type_id', '1');
+      formData.append('tags', '1');
+
+    //  return console.log(formData)
+      // imageURLs.forEach((url, index) => {
+      //   if (url) {
+      //     const fileInputRef = [fileInputRef1, fileInputRef2, fileInputRef3][index];
+      //     const file = fileInputRef.current?.files?.[0];
+      //     if (file) {
+      //       formData.append(`image-${index + 1}`, file);
+      //     }
+      //   }
+      // });
+
+      const response = await createPublication(formData);
+
+      // Verifica si la respuesta es exitosa antes de continuar
+      if (response.status === 200 || response.status === 201) {
+        // Realiza acciones adicionales como limpiar el formulario o redirigir al usuario
+        console.log('Publicación creada con éxito:', response.data);
+      } else {
+        console.error('Error al crear la publicación:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error al crear la publicación:', error);
+    }
   };
 
   const handleNext = () => {
-    if(title.includes('')) {
-      return console.log('no puede estar vacio')
+    if (title.includes('')) {
+      return console.log('no puede estar vacio');
     }
-    setStep(step + 1)
-  }
+    setStep(step + 1);
+  };
 
   const defaultValues = {
     title: '',
     type: '',
     category: '',
     recomendation: '',
-    link : ''
-  }
+    link: '',
+  };
 
   const handleBack = () => {
-    setStep(step - 1)
-    reset(defaultValues)
-  }
+    setStep(step - 1);
+    reset(defaultValues);
+  };
 
-
-
-  const handleFileChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
 
-    if(!file) {
-      console.log('No file provided')
+    if (!file) {
+      console.log('No file provided');
       return;
     }
     const urlFile = URL.createObjectURL(file);
     const urlFile2 = URL.createObjectURL(file);
     const urlFile3 = URL.createObjectURL(file);
-    setImageURLs([urlFile, urlFile2, urlFile3])
+    setImageURLs([urlFile, urlFile2, urlFile3]);
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -127,8 +184,8 @@ const Post: NextPageWithLayout = () => {
           </>
         )}
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
+        <div
+          
           className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] rounded-2xl"
         >
           {step === 1 ? (
@@ -140,7 +197,7 @@ const Post: NextPageWithLayout = () => {
                     'linear-gradient(to right, blue 50%, gray 50%)',
                 }}
               ></div>
-              <div className="mt-5 flex flex-col gap-2 items-start w-[80%]">
+              <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-2 items-start w-[80%]">
                 <h2 className="app-title-2 mt-4 ">Publicacion</h2>
                 <h3 className="app-subtitle-2 text-app-grayDark">
                   Informacion basica
@@ -154,38 +211,40 @@ const Post: NextPageWithLayout = () => {
                     type="text"
                     className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
                   />
+                  <p className="app-subtitle-2 text-app-gray relative ml-7 pl-1 w-[185px] bg-white z-50">
+                    Tde
+                  </p>
+                  <input
+                    {...register('description', { required: true })}
+                    type="text"
+                    className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
+                  />
                   <div className="relative mt-6 flex gap-4">
                     <select
-                      {...register('type', { required: true })}
+                      {...register('publication_type_id', { required: true })}
                       className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
-                      name="type"
-                      id="type"
+                      name="publication_type_id"
+                      id="publication_type_id"
                     >
                       <option value="">Tipo</option>
-                      <option value="branch-and-stores">
-                        Marcas y Tiendas
-                      </option>
-                      <option value="music">Artistas y Conciertos</option>
-                      <option value="events">Torneos</option>
+                      {publicationsTypes?.map((item: any) => (
+                        <option key={item.id} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
                     </select>
                     <select
-                      {...register('category', { required: true })}
+                      {...register('tags', { required: true })}
                       className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
-                      name="category"
-                      id="category"
+                      name="tags"
+                      id="tags"
                     >
                       <option value="">Category</option>
-                      <option value="clothing-and-accessories">
-                        Clothing and Accessories
-                      </option>
-                      <option value="sports">Sports</option>
-                      <option value="concerts">Concerts</option>
-                      <option value="meet-and-greet">Meet & Greet</option>
-                      <option value="e-sports">E-Sports</option>
-                      <option value="pop-rock">Pop - Rock</option>
-                      <option value="technology">Technology</option>
-                      <option value="home-decor">Home - Decor</option>
-                      <option value="supply">Supply</option>
+                      {tags?.map((item: any) => (
+                        <option key={item.id} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="mt-6 ">
@@ -193,10 +252,10 @@ const Post: NextPageWithLayout = () => {
                       ¿Por qué lo recomiendas?
                     </p>
                     <textarea
-                      {...register('recomendation', { required: true })}
+                      {...register('content', { required: true })}
                       className="w-full -mt-3 border-2 rounded-2xl pl-4 pt-4"
-                      name="recomendation"
-                      id="recomendation"
+                      name="content"
+                      id="content"
                     ></textarea>
                   </div>
                   <div className="mt-6 w-full">
@@ -204,23 +263,24 @@ const Post: NextPageWithLayout = () => {
                       Link De Referencia
                     </p>
                     <input
-                      {...register('link', { required: true })}
+                      {...register('reference_link', { required: true })}
                       type="text"
                       className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
-                      name="link"
-                      id="link"
+                      name="reference_link"
+                      id="reference_link"
                     />
                   </div>
                   <div className="flex items-center justify-center w-full mt-10">
                     <button
-                      onClick={handleNext}
+                      type="submit"
+                      // onClick={handleNext}
                       className="app-subtitle-1 w-32 h-12 bg-app-blue rounded-full text-white"
                     >
                       Siguiente
                     </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </>
           ) : (
             <>
@@ -237,52 +297,60 @@ const Post: NextPageWithLayout = () => {
                   Selecciona máximo tres fotos para crear una galería
                 </h3>
                 <div className="flex flex-row justify-around items-center mt-4 w-full h-[168px] sm:h-[257px] border-[1px] rounded-2xl">
-                <label
-                      htmlFor="archivo1"
-                      className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
-                      style={
-                        imageURLs[0]
-                          ? { backgroundImage: `url(${imageURLs[0]})` }
-                          : { backgroundColor: '' }
-                      }
-                    >
-                      <input onChange={(e) => handleFileChange(0, e)} type="file" id="archivo1" className="hidden" ref={fileInputRef1} />
-                      {
-                        !imageURLs[0]
-                         && <p>+</p>
-                      }
-                    
-                    </label>
-                    <label
-                      htmlFor="archivo2"
-                      className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
-                      style={
-                        imageURLs[1]
-                          ? { backgroundImage: `url(${imageURLs[1]})` }
-                          : { backgroundColor: '' }
-                      }
-                    >
-                      <input onChange={(e) => handleFileChange(1, e)} type="file" id="archivo2" className="hidden" ref={fileInputRef2} />
-                      {
-                        !imageURLs[1]
-                         && <p>+</p>
-                      }
-                    </label>
-                    <label
-                      htmlFor="archivo3"
-                      className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
-                      style={
-                        imageURLs[2]
-                          ? { backgroundImage: `url(${imageURLs[2]})` }
-                          : { backgroundColor: '' }
-                      }
-                    >
-                      <input onChange={(e) => handleFileChange(2, e)} type="file" id="archivo3" className="hidden" ref={fileInputRef3}   />
-                      {
-                        !imageURLs[2]
-                         && <p>+</p>
-                      }
-                    </label>
+                  <label
+                    htmlFor="archivo1"
+                    className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                    style={
+                      imageURLs[0]
+                        ? { backgroundImage: `url(${imageURLs[0]})` }
+                        : { backgroundColor: '' }
+                    }
+                  >
+                    <input
+                      onChange={(e) => handleFileChange(0, e)}
+                      type="file"
+                      id="archivo1"
+                      className="hidden"
+                      ref={fileInputRef1}
+                    />
+                    {!imageURLs[0] && <p>+</p>}
+                  </label>
+                  <label
+                    htmlFor="archivo2"
+                    className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                    style={
+                      imageURLs[1]
+                        ? { backgroundImage: `url(${imageURLs[1]})` }
+                        : { backgroundColor: '' }
+                    }
+                  >
+                    <input
+                      onChange={(e) => handleFileChange(1, e)}
+                      type="file"
+                      id="archivo2"
+                      className="hidden"
+                      ref={fileInputRef2}
+                    />
+                    {!imageURLs[1] && <p>+</p>}
+                  </label>
+                  <label
+                    htmlFor="archivo3"
+                    className="relative bg-cover bg-no-repeat flex flex-col justify-center text-app-blue text-2xl items-center bg-app-grayLight md:w-40 md:h-48 sm:w-32 sm:h-40 w-24 h-28 rounded-2xl cursor-pointer"
+                    style={
+                      imageURLs[2]
+                        ? { backgroundImage: `url(${imageURLs[2]})` }
+                        : { backgroundColor: '' }
+                    }
+                  >
+                    <input
+                      onChange={(e) => handleFileChange(2, e)}
+                      type="file"
+                      id="archivo3"
+                      className="hidden"
+                      ref={fileInputRef3}
+                    />
+                    {!imageURLs[2] && <p>+</p>}
+                  </label>
                 </div>
                 <div className="flex items-center justify-center w-full mt-10">
                   <button
@@ -295,7 +363,7 @@ const Post: NextPageWithLayout = () => {
               </div>
             </>
           )}
-        </form>
+        </div>
       </div>
     </div>
   );

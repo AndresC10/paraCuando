@@ -7,7 +7,7 @@ import HamburguerMenu from '../../../../lib/helpers/HamburguerMenu';
 import { NextPageWithLayout } from '../../../page';
 import { useEffect, useState } from 'react';
 import { publicationToCardEvent, sortPublicationsByDate } from '../../../../lib/helpers/Publications.helper';
-import { usePublications } from '../../../../lib/services/publications.services';
+import { usePublications, useTags } from '../../../../lib/services/publications.services';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -18,7 +18,7 @@ export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { details_id } = router.query;
   const [categories, setCategories] = useState<any>([]);
-  const token = Cookies.get('token');
+  const token = Cookies.get('token'); 
   const [publication, setPublication] = useState<any>([]);
   
   const {title, description, reference_link, votes_count, publication_type: { name: publicationName = 'Default' } = {}, images, tags} = publication;
@@ -29,6 +29,9 @@ export const CategoryPage: NextPageWithLayout = () => {
   const {data: publicationResponse, error, isLoading} = usePublications();
 
   const publications = publicationResponse?.results.results
+  const {data: tagsResponse, error: errorTags, isLoading: isLoadingTags} = useTags();
+  const tag = tagsResponse?.results.results;
+  
 
   interface PublicationImage {
     image_url: string;
@@ -50,11 +53,7 @@ export const CategoryPage: NextPageWithLayout = () => {
     axios
     .get(
       `https://paracuando-academlo-api.academlo.tech/api/v1/publications-types/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+     
     )
     .then((response) => {
       setCategories(response.data.results.results);
@@ -124,21 +123,13 @@ export const CategoryPage: NextPageWithLayout = () => {
           gustos
         </p>
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
-          <button className="relative top-10 left-7 bg-white min-w-[150px] py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Marcas y tiendas
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Artistas y conciertos
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Torneos
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Restaurantes
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Rock
-          </button>
+        {
+              tag?.map((item: any) => (
+                <button key={item.id} className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                  {item.name}
+                </button>
+              ))
+            }
         </div>
         <Link href={'todoslosinteres'}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">

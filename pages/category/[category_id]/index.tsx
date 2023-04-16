@@ -11,26 +11,28 @@ import {
   sortPublicationsBySuggestion,
   filterPublicationsByCategory,
 } from '../../../lib/helpers/Publications.helper';
-import { usePublications } from '../../../lib/services/publications.services';
-import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import { usePublications, useTags } from '../../../lib/services/publications.services';
+import { usePublicationsTypes } from '../../../lib/services/publications-types.services';
 
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
 
   const { category_id } = router.query;
-  const [category, setCategory] = useState<any>([]);
-  const [categories, setCategories] = useState<any>([]);
 
   const { data: publicationResponse, error, isLoading } = usePublications();
+  const {data: publicationsTypesResponse, error: errorPublicationsTypes, isLoading: isLoadingPublicationsTypes} = usePublicationsTypes();
+  const {data: tagsResponse, error: errorTags, isLoading: isLoadingTags} = useTags();
 
   const publications = publicationResponse?.results.results;
-  const token = Cookies.get('token');
+  const publicationsTypes = publicationsTypesResponse?.results.results;
+  const tags = tagsResponse?.results.results;
+  const publicationsTypesById = publicationsTypes?.find((publicationType: any) => publicationType.id == category_id) || {};
+
+  const {id, name} = publicationsTypesById;
 
   const filteredPublications = filterPublicationsByCategory(
     publications || [],
-    category.id
+    id
   );
   const cardSortedByVotes =
     sortPublicationsByVotes(filteredPublications).map(publicationToCardEvent) ||
@@ -43,51 +45,15 @@ export const CategoryPage: NextPageWithLayout = () => {
       publicationToCardEvent
     ) || [];
 
-  useEffect(() => {
-    // Peticion 1: Tipo de publicación por ID
-    const fetchCategoryById = () =>
-      axios.get(
-        `https://paracuando-academlo-api.academlo.tech/api/v1/publications-types/${category_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-    // Peticion 2: Todos los tipos de publicación
-    const fetchAllCategories = () =>
-      axios.get(
-        'https://paracuando-academlo-api.academlo.tech/api/v1/publications-types',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-    // Realizar ambas peticiones y actualizar el estado cuando se completen
-    Promise.all([fetchCategoryById(), fetchAllCategories()])
-      .then(([categoryByIdResponse, allCategoriesResponse]) => {
-        // Actualizar el estado según las respuestas
-        setCategory(categoryByIdResponse.data.results);
-        setCategories(allCategoriesResponse.data.results.results);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [category_id]);
-
-  console.log(category)
-
+ 
   return (
     <div>
       <div className='w-full h-52 bg-[url("/branch-and-stories.png")] bg-cover bg-center'>
         <h3 className="relative xs:top-4 xs:ml-16 md:top-8 md:ml-32 app-subtitle-1 text-white">
-          Home / {category.name}
+          Home / {name}
         </h3>
         <h2 className="relative xs:top-5 xs:ml-16 md:top-10 md:ml-32 app-title-1 text-app-yellow">
-          {category.name}
+          {name}
         </h2>
         <p className="relative xs:top-5 xs:ml-16 md:top-10 md:ml-32 text-white app-subtitle-1">
           Descubre las marcas y tiendas que la gente quiere cerca
@@ -98,7 +64,7 @@ export const CategoryPage: NextPageWithLayout = () => {
           <HamburguerMenu />
         </div>
         <div className="relative sm:flex items-center justify-center gap-2 xs:hidden">
-          {categories?.map((item: any) => {
+          {publicationsTypes?.map((item: any) => {
             return (
               <Link href={`/category/${item.id}`} key={item.id}>
                 <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
@@ -134,21 +100,13 @@ export const CategoryPage: NextPageWithLayout = () => {
           gustos
         </p>
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
-          <button className="relative top-10 left-7 bg-white min-w-[150px] py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Marcas y tiendas
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Artistas y conciertos
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Torneos
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Restaurantes
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Rock
-          </button>
+        {
+              tags?.map((item: any) => (
+                <button key={item.id} className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                  {item.name}
+                </button>
+              ))
+            }
         </div>
         <Link href={'todoslosinteres'}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">
