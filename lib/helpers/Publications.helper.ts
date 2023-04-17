@@ -43,6 +43,6 @@ export const sortPublicationsBySuggestion = (publications: Publication[]) => {
   );
 };
 
-export const filterPublicationsByCategory = (publications: Publication[], categoryId: number) => {
+export const filterPublicationsByCategory = (publications: Publication[], categoryId: any) => {
   return publications.filter((publication) => publication.publication_type_id === categoryId);
 };

@@ -3,7 +3,10 @@ import Logo from '../components/assets/logo/Logo';
 import { Layout } from '../components/layout/Layout';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
 import { NextPageWithLayout } from './page';
-import { usePublications, useTags } from '../lib/services/publications.services';
+import {
+  usePublications,
+  useTags,
+} from '../lib/services/publications.services';
 import {
   publicationToCardEvent,
   sortPublicationsByDate,
@@ -11,13 +14,36 @@ import {
   sortPublicationsByVotes,
 } from '../lib/helpers/Publications.helper';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 const Home: NextPageWithLayout = () => {
- 
+  const [searchValue, setSearchValue] = useState('');
+  const router = useRouter();
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (searchValue) {
+      router.push(`/search?query=${searchValue}`);
+    }
+  };
+
   const { data: publicationResponse, error, isLoading } = usePublications();
-  const {data: publicationsTypesResponse, error: errorPublicationsTypes, isLoading: isLoadingPublicationsTypes} = usePublicationsTypes();
-  const {data: tagsResponse, error: errorTags, isLoading: isLoadingTags} = useTags();
-  
+  const {
+    data: publicationsTypesResponse,
+    error: errorPublicationsTypes,
+    isLoading: isLoadingPublicationsTypes,
+  } = usePublicationsTypes();
+  const {
+    data: tagsResponse,
+    error: errorTags,
+    isLoading: isLoadingTags,
+  } = useTags();
+
   const publications = publicationResponse?.results.results;
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const tags = tagsResponse?.results.results;
@@ -41,11 +67,15 @@ const Home: NextPageWithLayout = () => {
           <Logo />
         </div>
         <div className="flex flex-col gap-4">
-          <input
-            className='px-6 py-4 rounded-3xl w-full sm:w-[465px]  bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
-            type="text"
-            placeholder="¿Qué quieres ver en tu ciudad?"
-          />
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="searchValue"
+              placeholder="¿Qué quieres ver en tu ciudad?"
+              onChange={handleChange}
+              className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+            />
+          </form>
           <div className="relative flex items-center justify-center gap-2">
             {publicationsTypes?.map((item: any) => {
               return (
@@ -85,14 +115,14 @@ const Home: NextPageWithLayout = () => {
           gustos
         </p>
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
-            {
-              tags?.map((item: any) => (
-                <button key={item.id} className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]">
-                  {item.name}
-                </button>
-              ))
-            }
-        
+          {tags?.map((item: any) => (
+            <button
+              key={item.id}
+              className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]"
+            >
+              {item.name}
+            </button>
+          ))}
         </div>
         <Link href={`/category/${1}`}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">

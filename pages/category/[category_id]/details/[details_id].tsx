@@ -21,6 +21,7 @@ export const CategoryPage: NextPageWithLayout = () => {
   const token = Cookies.get('token'); 
   const [publication, setPublication] = useState<any>([]);
   const [userVoted, setUserVoted] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState('');
 
   
  
@@ -69,32 +70,51 @@ export const CategoryPage: NextPageWithLayout = () => {
   const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
 
   const handleVotar = () => {
-    // Define la URL y el método para la petición
-    const url = `https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publication?.id}/vote/`;
-    const method = "post";
-  
-    axios({
-      url,
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        // Actualiza el estado local de la publicación y el conteo de votos
-        setPublication({
-          ...publication,
-          votes_count: userVoted
-            ? publication.votes_count - 1
-            : publication.votes_count + 1,
-        });
-        // Cambia el estado del voto del usuario
-        setUserVoted(!userVoted);
+
+    //si el usuario esta logueado, si no mandar a login
+    if (!token) {
+      console.log('hola')
+      router.push('/sign_up');
+      return;
+    }
+    else{
+      const url = `https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publication?.id}/vote/`;
+      const method = "post";
+    
+      axios({
+        url,
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((error) => {
-        console.log(error);
-      });
+        .then((response) => {
+          console.log(response);
+          // Actualiza el estado local de la publicación y el conteo de votos
+          setPublication({
+            ...publication,
+            votes_count: userVoted
+              ? publication.votes_count - 1
+              : publication.votes_count + 1,
+          });
+          // Cambia el estado del voto del usuario
+          setUserVoted(!userVoted);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (searchValue) {
+      router.push(`/search?query=${searchValue}`);
+    }
   };
   
   
@@ -116,11 +136,15 @@ export const CategoryPage: NextPageWithLayout = () => {
             );
           })}
           </div>
+          <form onSubmit={handleSubmit}>
             <input
-            className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
-            type="text"
-            placeholder="¿Qué quieres ver en tu ciudad?"
-          />
+              type="text"
+              name="searchValue"
+              placeholder="¿Qué quieres ver en tu ciudad?"
+              onChange={handleChange}
+              className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+            />
+          </form>
         </div>
       <div className='app-container sm:grid grid-cols-8 grid-rows-6 mt-20 w-full max-w-[1000px] h-[450px] mx-4 mb-72 sm:mb-20'>
         <div className='sm: col-span-4 row-span-5 sm:grid grid-rows-6'>
