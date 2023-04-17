@@ -8,6 +8,7 @@ import {
   useTags,
 } from '../lib/services/publications.services';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
+import axios from 'axios';
 
 const Post: NextPageWithLayout = () => {
   const [step, setStep] = useState<number>(1);
@@ -42,11 +43,9 @@ const Post: NextPageWithLayout = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormValues>();
 
-  type FormData = {
-    // Define los tipos de datos para el objeto FormData
-    // Por ejemplo:
+  type FormValues = {
     title: string;
     description: string;
     content: string;
@@ -56,46 +55,51 @@ const Post: NextPageWithLayout = () => {
     //...
   };
 
-  const onSubmit = async (data: any) => {
-    try {
-      const formData = new FormData();
+  // const formData = new FormData();
 
-      formData.append('title', 'Prueba 8');
-      formData.append('description', 'description prueba 7');
-      formData.append('content', 'content prueba 7');
-      formData.append('reference_link', 'reference_link prueba 7');
-      formData.append('publication_type_id', '1');
-      formData.append('tags', '1');
-
-    //  return console.log(formData)
-      // imageURLs.forEach((url, index) => {
-      //   if (url) {
-      //     const fileInputRef = [fileInputRef1, fileInputRef2, fileInputRef3][index];
-      //     const file = fileInputRef.current?.files?.[0];
-      //     if (file) {
-      //       formData.append(`image-${index + 1}`, file);
-      //     }
-      //   }
-      // });
-
-      const response = await createPublication(formData);
-
-      // Verifica si la respuesta es exitosa antes de continuar
-      if (response.status === 200 || response.status === 201) {
-        // Realiza acciones adicionales como limpiar el formulario o redirigir al usuario
-        console.log('Publicación creada con éxito:', response.data);
-      } else {
-        console.error('Error al crear la publicación:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error al crear la publicación:', error);
+  const createAndUploadImages = async (fdata: FormValues) => {
+    fdata.description = fdata.content
+    const response = await createPublication(fdata);
+  
+    if (response.status === 200 || response.status === 201) {
+      console.log('Publicación creada con éxito:', response.data);
+      const publicationID = response.data.results.id;
+      await uploadImages(publicationID);
+    } else {
+      console.error('Error al crear la publicación:', response.statusText);
     }
   };
 
-  const handleNext = () => {
-    if (title.includes('')) {
-      return console.log('no puede estar vacio');
+  const uploadImages = async (publicationID: string) => {
+    const imageData = new FormData();
+  
+    // Añade imágenes al formData
+    if (fileInputRef1.current?.files) {
+      imageData.append('image', fileInputRef1.current.files[0]);
     }
+    if (fileInputRef2.current?.files) {
+      imageData.append('image', fileInputRef2.current.files[0]);
+    }
+    if (fileInputRef3.current?.files) {
+      imageData.append('image', fileInputRef3.current.files[0]);
+    }
+  
+    axios
+      .post(`/publications/${publicationID}/add-image`, imageData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+
+  const onSubmit = (fdata: FormValues) => {
+    createAndUploadImages(fdata);
+  };
+  
+
+  const handleNext = () => {
+   
+
     setStep(step + 1);
   };
 
@@ -184,8 +188,8 @@ const Post: NextPageWithLayout = () => {
           </>
         )}
 
-        <div
-          
+        <form
+          onSubmit={handleSubmit(onSubmit)} 
           className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] rounded-2xl"
         >
           {step === 1 ? (
@@ -197,7 +201,7 @@ const Post: NextPageWithLayout = () => {
                     'linear-gradient(to right, blue 50%, gray 50%)',
                 }}
               ></div>
-              <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-2 items-start w-[80%]">
+              <div className="mt-5 flex flex-col gap-2 items-start w-[80%]">
                 <h2 className="app-title-2 mt-4 ">Publicacion</h2>
                 <h3 className="app-subtitle-2 text-app-grayDark">
                   Informacion basica
@@ -208,14 +212,6 @@ const Post: NextPageWithLayout = () => {
                   </p>
                   <input
                     {...register('title', { required: true })}
-                    type="text"
-                    className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
-                  />
-                  <p className="app-subtitle-2 text-app-gray relative ml-7 pl-1 w-[185px] bg-white z-50">
-                    Tde
-                  </p>
-                  <input
-                    {...register('description', { required: true })}
                     type="text"
                     className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
                   />
@@ -273,14 +269,14 @@ const Post: NextPageWithLayout = () => {
                   <div className="flex items-center justify-center w-full mt-10">
                     <button
                       type="submit"
-                      // onClick={handleNext}
+                      onClick={handleNext}
                       className="app-subtitle-1 w-32 h-12 bg-app-blue rounded-full text-white"
                     >
                       Siguiente
                     </button>
                   </div>
                 </div>
-              </form>
+              </div>
             </>
           ) : (
             <>
@@ -363,7 +359,7 @@ const Post: NextPageWithLayout = () => {
               </div>
             </>
           )}
-        </div>
+        </form>
       </div>
     </div>
   );
