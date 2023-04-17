@@ -11,7 +11,7 @@ const Search: NextPageWithLayout = () => {
   const [selectedItem, setSelectedItem] = useState('');
   const [searchValue, setSearchValue] = useState('');
 
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(location.search);
   const searchValues = urlParams.get('query');
   
   useEffect(() => {
