@@ -26,14 +26,20 @@ export const CategoryPage: NextPageWithLayout = () => {
   const publications = publicationResponse?.results.results;
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const tags = tagsResponse?.results.results;
-  const publicationsTypesById = publicationsTypes?.find((publicationType: any) => publicationType.id == category_id) || {};
 
-  const {id, name} = publicationsTypesById;
+  interface PublicationType {
+    id?: number;
+    name?: string;
+  }
+  
 
-  const filteredPublications = filterPublicationsByCategory(
-    publications || [],
-    id
-  );
+  const publicationsTypesById: PublicationType = publicationsTypes?.find((publicationType: any) => publicationType.id == category_id) ?? {};
+  
+  // Desestructura id y name de publicationsTypesById
+  const { id, name } = publicationsTypesById;
+  
+  const filteredPublications = id !== undefined ? filterPublicationsByCategory(publications || [], id) : [];
+
   const cardSortedByVotes =
     sortPublicationsByVotes(filteredPublications).map(publicationToCardEvent) ||
     [];
@@ -108,7 +114,7 @@ export const CategoryPage: NextPageWithLayout = () => {
               ))
             }
         </div>
-        <Link href={'todoslosinteres'}>
+        <Link href={`/category/${1}`}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">
             Ver todos los intereses
           </p>

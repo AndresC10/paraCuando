@@ -126,3 +126,7 @@ input:-webkit-autofill {
   right: 31px !important;
   top: 71px !important;
 }
+
+.selected {
+  border-bottom: 4px solid blue;
+}
