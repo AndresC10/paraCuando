@@ -89,7 +89,7 @@ const Search: NextPageWithLayout = () => {
                 name={item.title}
                 description={item.description}
                 url={`/category/${item.publication_type_id}/details/${item.id}`}
-                votos={item.votes}
+                votos={item.votes_count}
               />
             );
         }
