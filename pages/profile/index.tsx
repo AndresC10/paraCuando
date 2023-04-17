@@ -80,6 +80,7 @@ export const CategoryPage: NextPageWithLayout = () => {
               description={event.description}
               url={event.url}
               votos={event.votos}
+              reference_link={event.reference_link}
             />
           ))}
         </div>
