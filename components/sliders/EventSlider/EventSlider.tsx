@@ -54,6 +54,7 @@ export const EventSlider: FC<IEventSlider> = ({ title, subtitle, events }) => {
                 description={event.description}
                 url={event.url}
                 votos={event.votos}
+                reference_link={event.reference_link}
               />
             </SwiperSlide>
           ))}

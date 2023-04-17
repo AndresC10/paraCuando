@@ -125,6 +125,7 @@ const Search: NextPageWithLayout = () => {
               description={item.description}
               url={item.url}
               votos={item.votos}
+              reference_link={item.reference_link}
             />
           );
       }) : 
@@ -137,6 +138,7 @@ const Search: NextPageWithLayout = () => {
             description={item.description}
             url={item.url}
             votos={item.votos}
+            reference_link={item.reference_link}
           />
         );
     })

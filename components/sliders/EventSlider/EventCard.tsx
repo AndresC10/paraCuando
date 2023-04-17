@@ -9,6 +9,7 @@ interface EventCardProps {
   description: string;
   url: string;
   votos: number;
+  reference_link: string;
 }
 
 const EventCard: FC<EventCardProps> = ({
@@ -17,6 +18,7 @@ const EventCard: FC<EventCardProps> = ({
   description,
   url,
   votos,
+  reference_link
 }) => {
 
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -46,7 +48,7 @@ const EventCard: FC<EventCardProps> = ({
               {description}
             </p>
           </div>
-          <p className="mt-3 text-app-blue font-medium text-sm">ladygaga.com</p>
+          <p className="mt-3 text-app-blue font-medium text-sm">{reference_link}</p>
           <div className="flex gap-2 mt-2">
             <User />
             <p className="app-text-2 font-semibold mt-[4.4px]">{votos} votos</p>

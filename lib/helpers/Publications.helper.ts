@@ -9,6 +9,7 @@ export const publicationToCardEvent = (publication: Publication) => {
     description: publication.description,
     url: `/category/${publication.publication_type_id}/details/${publication.id}`,
     votos: publication.votes_count,
+    reference_link: publication.reference_link,
   };
 };
 
