@@ -7,7 +7,7 @@ import HamburguerMenu from '../../../../lib/helpers/HamburguerMenu';
 import { NextPageWithLayout } from '../../../page';
 import { useEffect, useState } from 'react';
 import { publicationToCardEvent, sortPublicationsByDate } from '../../../../lib/helpers/Publications.helper';
-import { usePublications } from '../../../../lib/services/publications.services';
+import { usePublications, useTags } from '../../../../lib/services/publications.services';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -18,17 +18,22 @@ export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { details_id } = router.query;
   const [categories, setCategories] = useState<any>([]);
-  const token = Cookies.get('token');
+  const token = Cookies.get('token'); 
   const [publication, setPublication] = useState<any>([]);
+  const [userVoted, setUserVoted] = useState<boolean>(false);
+
   
-  const {title, description, reference_link, votes_count, publication_type: { name: publicationName = 'Default' } = {}, images, tags} = publication;
-  const firstImage = images?.[0]?.image_url || '';
-  const tagsArray = tags?.map((tag: any) => tag.name) || [];
+ 
+  const firstImage = publication?.images?.[0]?.image_url || '';
+  const tagsArray = publication?.tags?.map((tag: any) => tag.name) || [];
  
 
   const {data: publicationResponse, error, isLoading} = usePublications();
 
   const publications = publicationResponse?.results.results
+  const {data: tagsResponse, error: errorTags, isLoading: isLoadingTags} = useTags();
+  const tag = tagsResponse?.results.results;
+  
 
   interface PublicationImage {
     image_url: string;
@@ -50,11 +55,7 @@ export const CategoryPage: NextPageWithLayout = () => {
     axios
     .get(
       `https://paracuando-academlo-api.academlo.tech/api/v1/publications-types/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+     
     )
     .then((response) => {
       setCategories(response.data.results.results);
@@ -62,9 +63,41 @@ export const CategoryPage: NextPageWithLayout = () => {
     .catch((error) => {
       console.log(error);
     });
-  }, [details_id])
+  }, [details_id, publications])
 
+  
   const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
+
+  const handleVotar = () => {
+    // Define la URL y el método para la petición
+    const url = `https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publication?.id}/vote/`;
+    const method = "post";
+  
+    axios({
+      url,
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        // Actualiza el estado local de la publicación y el conteo de votos
+        setPublication({
+          ...publication,
+          votes_count: userVoted
+            ? publication.votes_count - 1
+            : publication.votes_count + 1,
+        });
+        // Cambia el estado del voto del usuario
+        setUserVoted(!userVoted);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  
+  
 
   return (
     <div className='flex flex-col justify-center items-center'>
@@ -91,25 +124,25 @@ export const CategoryPage: NextPageWithLayout = () => {
         </div>
       <div className='app-container sm:grid grid-cols-8 grid-rows-6 mt-20 w-full max-w-[1000px] h-[450px] mx-4 mb-72 sm:mb-20'>
         <div className='sm: col-span-4 row-span-5 sm:grid grid-rows-6'>
-          <h3 className='app-subtitle-1 mb-1 mt-4'>{`${publicationName} / ${tagsArray}`}</h3> 
-          <h2 className='app-title-1 mb-4'>{title}</h2>
+          <h3 className='app-subtitle-1 mb-1 mt-4'>{`${publication?.publication_type?.name || ''} / ${tagsArray}`}</h3> 
+          <h2 className='app-title-1 mb-4'>{publication?.title}</h2>
           <div className='flex items-center mb-8 mt-4 row-start-3 row-end-5'>
-          <p className='app-text-1 text-app-grayDark'>{description}</p>
+          <p className='app-text-1 text-app-grayDark'>{publication?.description}</p>
           </div>
           <Link className='text-app-blue app-text-1 text-sm mt-4' href={'/category/events'}>
-            {reference_link}
+            {publication?.reference_link}
           </Link>
 
           <div className="flex gap-2 mt-2 ml-2 mb-4">
             <User />
-            <p className="app-text-2 font-semibold mt-[4.4px]"> {votes_count} votos</p>
+            <p className="app-text-2 font-semibold mt-[4.4px]"> {publication?.votes_count} votos</p>
           </div>
         </div>
         <div className='sm:ml-4 sm:col-span-4 sm:row-span-6 min-w-[300px] flex justify-center'>
           <img className='w-full h-96 sm:h-auto' src={firstImage} alt="" />
         </div>
         <div className='sm:col-span-4 sm:row-start-6 sm:row-end-6'>
-        <button className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
+        <button onClick={handleVotar} className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
             Votar
           </button>
         </div>
@@ -124,21 +157,13 @@ export const CategoryPage: NextPageWithLayout = () => {
           gustos
         </p>
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
-          <button className="relative top-10 left-7 bg-white min-w-[150px] py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Marcas y tiendas
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Artistas y conciertos
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Torneos
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Restaurantes
-          </button>
-          <button className="relative top-10 left-7 bg-white min-w-[150px]  py-4 text-app-gray rounded-full app-text-2 leading-[15.23px] border-[3px]">
-            Rock
-          </button>
+        {
+              tag?.map((item: any) => (
+                <button key={item.id} className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                  {item.name}
+                </button>
+              ))
+            }
         </div>
         <Link href={'todoslosinteres'}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">

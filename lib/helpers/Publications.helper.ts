@@ -7,7 +7,7 @@ export const publicationToCardEvent = (publication: Publication) => {
     imageUrl: img,
     name: publication.title,
     description: publication.description,
-    url: `category/${publication.publication_type_id}/details/${publication.id}`,
+    url: `/category/${publication.publication_type_id}/details/${publication.id}`,
     votos: publication.votes_count,
   };
 };
