@@ -13,6 +13,7 @@ import {
 } from '../../../lib/helpers/Publications.helper';
 import { usePublications, useTags } from '../../../lib/services/publications.services';
 import { usePublicationsTypes } from '../../../lib/services/publications-types.services';
+import { useState } from 'react';
 
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -23,6 +24,7 @@ export const CategoryPage: NextPageWithLayout = () => {
   const {data: publicationsTypesResponse, error: errorPublicationsTypes, isLoading: isLoadingPublicationsTypes} = usePublicationsTypes();
   const {data: tagsResponse, error: errorTags, isLoading: isLoadingTags} = useTags();
 
+
   const publications = publicationResponse?.results.results;
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const tags = tagsResponse?.results.results;
@@ -31,6 +33,19 @@ export const CategoryPage: NextPageWithLayout = () => {
     id?: number;
     name?: string;
   }
+
+  const [searchValue, setSearchValue] = useState('');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (searchValue) {
+      router.push(`/search?query=${searchValue}`);
+    }
+  };
   
 
   const publicationsTypesById: PublicationType = publicationsTypes?.find((publicationType: any) => publicationType.id == category_id) ?? {};
@@ -80,11 +95,15 @@ export const CategoryPage: NextPageWithLayout = () => {
             );
           })}
         </div>
-        <input
-          className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
-          type="text"
-          placeholder="¿Qué quieres ver en tu ciudad?"
-        />
+         <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="searchValue"
+              placeholder="¿Qué quieres ver en tu ciudad?"
+              onChange={handleChange}
+              className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+            />
+          </form>
       </div>
 
       <EventSlider

@@ -1,20 +1,38 @@
-import { Link } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
-import HamburguerMenu from '../lib/helpers/HamburguerMenu';
 import { NextPageWithLayout } from './page';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
 import { useEffect, useState } from 'react';
 import SearchCard from '../components/sliders/EventSlider/SearchCard';
 import { usePublications } from '../lib/services/publications.services';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
-import { publicationToCardEvent, sortPublicationsByDate } from '../lib/helpers/Publications.helper';
+import { filterPublicationsByCategory, publicationToCardEvent, sortPublicationsByDate, sortPublicationsByVotes } from '../lib/helpers/Publications.helper';
 
 const Search: NextPageWithLayout = () => {
   const [selectedItem, setSelectedItem] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+
+ 
+  
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchValues = urlParams.get('query');
+    if(!urlParams) {
+      return;
+    }
+    else {
+      setSearchValue(searchValues || '');
+    }
+  }, []);
+  
 
   const handleSelect = (id: string) => {
     setSelectedItem(id);
+
   };
+
+  const handleSearch = (e: any) => {
+    setSearchValue(e.target.value);
+  }
 
   const {
     data: publicationsTypesResponse,
@@ -26,11 +44,26 @@ const Search: NextPageWithLayout = () => {
 
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const publications = data?.results.results;
-  // const img = publication.images[0]?.image_url || '';
+
+
+  const filterPublicationsByName = (publications: any, searchValue: string) => {
+    if(!searchValue) return publications;
+    return publications.filter((publication: any) => publication?.title.toLowerCase().includes(searchValue.toLowerCase()));
+  }
+
   const cardEventsSortByDate =
   sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
   [];
 
+  const cardEventsSortByVotes = sortPublicationsByVotes(
+    filterPublicationsByName(publications || [], searchValue)
+  ).map(publicationToCardEvent) || [];
+
+  const sortByCategory = filterPublicationsByCategory(
+    filterPublicationsByName(publications || [], searchValue),
+    selectedItem
+  ).map(publicationToCardEvent) || [];
+  
   return (
     <div>
       <div className='w-full h-36 bg-[url("/imgSearch.png")] bg-cover bg-center'>
@@ -47,6 +80,8 @@ const Search: NextPageWithLayout = () => {
             className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[561px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             type="text"
             placeholder="¿Qué quieres ver en tu ciudad?"
+            value={searchValue}
+            onChange={handleSearch}
           />
           <button
             type="submit"
@@ -57,8 +92,8 @@ const Search: NextPageWithLayout = () => {
         </form>
         <div className="relative w-[700px] sm:flex justify-between gap-2 xs:hidden">
           <p
-            className={`relative  app-subtitle-2 text-app-grayDark ${
-              selectedItem === null ? 'selected' : ''
+            className={`relative pb-2 app-subtitle-2 text-app-grayDark ${
+              selectedItem === '' ? 'selected' : ''
             }`}
             onClick={() => handleSelect('')}
           >
@@ -67,7 +102,7 @@ const Search: NextPageWithLayout = () => {
           {publicationsTypes?.map((item: any) => {
             return (
               <p
-                className={`relative  pb-2 app-subtitle-2 text-app-grayDark ${
+                className={`relative pb-2 app-subtitle-2 text-app-grayDark ${
                   selectedItem === item.id ? 'selected' : ''
                 }`}
                 key={item.id}
@@ -81,19 +116,31 @@ const Search: NextPageWithLayout = () => {
       </div>
       <div className=" flex flex-col gap-2 h-[72vh] w-[80%] mx-auto mt-8 mb-[430px]">
         {
-          publications?.slice(0,4).map((item: any) => {
-            return (
-              <SearchCard
-                key={item.id}
-                imageUrl={item.images[0]?.image_url || ''}
-                name={item.title}
-                description={item.description}
-                url={`/category/${item.publication_type_id}/details/${item.id}`}
-                votos={item.votes_count}
-              />
-            );
+         selectedItem === '' ?  cardEventsSortByVotes?.slice(0,4).map((item: any) => {
+          return (
+            <SearchCard
+              key={item.id}
+              imageUrl={item.imageUrl}
+              name={item.name}
+              description={item.description}
+              url={item.url}
+              votos={item.votos}
+            />
+          );
+      }) : 
+      sortByCategory?.slice(0,4).map((item: any) => {
+        return (
+          <SearchCard
+            key={item.id}
+            imageUrl={item.imageUrl}
+            name={item.name}
+            description={item.description}
+            url={item.url}
+            votos={item.votos}
+          />
+        );
+    })
         }
-        )}
        
       </div>
       <div className="h-[72vh] mt-8">
