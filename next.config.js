@@ -7,6 +7,15 @@ const nextConfig = {
         : 'https://paracuando-academlo-api.academlo.tech/api/v1', // production api
   },
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    minimumCacheTTL: 60,
+  },
 };
 
 module.exports = nextConfig;

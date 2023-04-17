@@ -1,4 +1,4 @@
-import FormData from 'form-data';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,11 @@ type FormValues = {
 
 export const ConfigPage: NextPageWithLayout = () => {
   const { data } = useUserMe();
-  const { data: userData } = useSWR(() => (data && data.id ? '/users/' + data.id : null));
+  const { data: userData } = useSWR(() =>
+    data && data.id ? '/users/' + data.id : null
+  );
+
+  console.log(data);
 
   const { register, handleSubmit, getValues } = useForm<FormValues>({
     defaultValues: {
@@ -36,23 +40,36 @@ export const ConfigPage: NextPageWithLayout = () => {
       return 'default_image_url';
     }
   };
-  
-
 
   const submit = (fdata: FormValues) => {
     const imageData = new FormData();
 
-    imageData.append('image_url', fdata.image_url ? [fdata.image_url[0], 'perro.jpg'] : ['default_image_url', 'perro.jpg']);
-    axios
-      .put(`/users/${data?.id}`, fdata)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-    if (userData?.results.image_url !== profileImg) {
+    async function submitImage() {
       axios
-        .post(`/users/${data?.id}/add-image`, imageData)
+        .post(`/users/${data?.id}/add-image`, imageData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
-      console.log(imageData);
+    }
+
+    if (fdata.image_url) {
+      for (let index = 0; index < fdata.image_url.length; index++) {
+        imageData.append('image', fdata.image_url[index]);
+      }
+    }
+
+    const dataObj = {
+      first_name: fdata.first_name,
+      last_name: fdata.last_name,
+    };
+
+    axios
+      .put(`/users/${data?.id}`, dataObj)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+    if (profileImg) {
+      submitImage();
     }
   };
 
@@ -73,15 +90,34 @@ export const ConfigPage: NextPageWithLayout = () => {
         <div className="xs:max-w-[375px] sm:max-w-[600px] w-[100%] md:max-w-[940px] p-4">
           <div className="w-[100%] flex flex-col md:flex-row gap-20">
             <div className="place-self-center">
-              <div
+              {data?.image_url ? (
+                <div className="w-[220px] h-[206px] rounded-[15px] mb-[19px] relative overflow-hidden">
+                  <Image
+                    src={
+                      profileImg
+                        ? getImageUrl()
+                        : `${data?.image_url + '?v=' + Date.now()}`
+                    }
+                    fill
+                    alt=""
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`w-[220px] h-[206px] rounded-[15px] mb-[19px] 'bg-[#D9D9D9]'
+                `}
+                ></div>
+              )}
+
+              {/* <div
                 className={`w-[220px] h-[206px]  rounded-[15px] mb-[19px] 'bg-[#D9D9D9]'
                 `}
                 style={
-                  data
+                  data?.image_url
                     ? { backgroundImage: `url(${data?.image_url})` }
-                    : { backgroundColor: 'white' }
+                    : { backgroundColor: '#D9D9D9' }
                 }
-              ></div>
+              ></div> */}
               <label className="text-[16px] text-[#6E6A6C] cursor-pointer">
                 Agrega una foto para tu perfil
                 <input
@@ -89,9 +125,7 @@ export const ConfigPage: NextPageWithLayout = () => {
                   className="hidden"
                   {...register('image_url', {
                     onChange() {
-                      setProfileImg(
-                       getImageUrl()
-                      );
+                      setProfileImg(getImageUrl());
                     },
                   })}
                 />
