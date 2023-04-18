@@ -17,13 +17,16 @@ import {
 } from '../../../lib/services/publications.services';
 import { usePublicationsTypes } from '../../../lib/services/publications-types.services';
 import { useState } from 'react';
+import Loader from '../../../lib/helpers/Loader';
 
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedItem, setSelectedItem] = useState(0);
 
   const { category_id } = router.query;
 
-  const { data: publicationResponse, error, isLoading } = usePublications();
+  const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
   const {
     data: publicationsTypesResponse,
     error: errorPublicationsTypes,
@@ -35,6 +38,10 @@ export const CategoryPage: NextPageWithLayout = () => {
     isLoading: isLoadingTags,
   } = useTags();
 
+  if(isLoading || isLoadingPublicationsTypes || isLoadingTags) {
+    return <Loader />;
+  }
+
   const publications = publicationResponse?.results.results;
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const tags = tagsResponse?.results.results;
@@ -44,7 +51,7 @@ export const CategoryPage: NextPageWithLayout = () => {
     name?: string;
   }
 
-  const [searchValue, setSearchValue] = useState('');
+
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
@@ -61,9 +68,7 @@ export const CategoryPage: NextPageWithLayout = () => {
     publicationsTypes?.find(
       (publicationType: any) => publicationType.id == category_id
     ) ?? {};
-  const [selectedItem, setSelectedItem] = useState(
-    publicationsTypesById?.id || ''
-  );
+
 
   // Desestructura id y name de publicationsTypesById
   const { id, name } = publicationsTypesById;

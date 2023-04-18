@@ -5,7 +5,7 @@ import { TagsResponse } from '../interfaces/tags.interface';
 
 function usePublications(params?: string) {
   const { data, error, isLoading } =
-    useSWR<PublicationsResponse>('/publications');
+    useSWR<PublicationsResponse>(`/publications/${params}`);
   return {
     data: data,
     error,
