@@ -23,10 +23,13 @@ const Header = () => {
   return (
     <div className="bg-black text-white flex items-center justify-between px-4 sm:px-12 py-4 min-h-[70px] text-sm">
       <Link href={'/'}>
-        <IconLogo className='hover:scale-125 active:scale-75 transition-transform duration-300' />
+        <IconLogo className="hover:scale-125 active:scale-75 transition-transform duration-300" />
       </Link>
       <div className="flex items-center justify-between gap-4">
-        <Link href={'/post'} className="text-app-blue hidden md:block hover:scale-110 active:scale-75 transition-transform duration-300">
+        <Link
+          href={'/post'}
+          className="text-app-blue hidden md:block hover:scale-110 active:scale-75 transition-transform duration-300"
+        >
           <button>+ Crear publicación</button>
         </Link>
         {!token && (
