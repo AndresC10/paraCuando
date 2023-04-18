@@ -49,6 +49,34 @@ const Search: NextPageWithLayout = () => {
     setSearchValue(e.target.value);
   };
 
+  const handlePlus = () => {
+    const carbon = document.getElementById('carbonPlus');
+    if (carbon) {
+      const existingDiv = carbon.querySelector('.divCarbon');
+  
+      if (existingDiv) {
+        carbon.removeChild(existingDiv);
+      } else {
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('divCarbon');
+        carbon.appendChild(newDiv);
+        publicationsTypes?.slice(1, 3).map((item: any) => {
+          const newP = document.createElement('p');
+          newP.classList.add('pCarbon');
+          newP.innerHTML = item.name;
+  
+          newP.addEventListener('click', () => {
+            handleSelect(item.id);
+          });
+  
+          newDiv.appendChild(newP);
+        });
+      }
+    }
+  };
+  
+  
+
   const {
     data: publicationsTypesResponse,
     error: errorPublicationsTypes,
@@ -104,7 +132,7 @@ const Search: NextPageWithLayout = () => {
         </form>
         <div className="mt-1 relative xxs:w-[350px] sm:w-[650px] flex gap-6 sm:justify-between">
           <p
-            className={`relative xs:text-sm pb-2 sm:app-subtitle-2 text-app-grayDark ${
+            className={`cursor-pointer hover:scale-110 transition-transform duration-300 relative xs:text-sm pb-2 sm:app-subtitle-2 text-app-grayDark ${
               selectedItem === '' ? 'selected' : ''
             }`}
             onClick={() => handleSelect('')}
@@ -115,7 +143,7 @@ const Search: NextPageWithLayout = () => {
             if (shouldRenderItem(index)) {
               return (
                 <p
-                  className={`relative xs:text-sm pb-2 sm:app-subtitle-2 text-app-grayDark ${
+                  className={`cursor-pointer hover:scale-110 transition-transform duration-300 relative xs:text-sm pb-2 sm:app-subtitle-2 text-app-grayDark ${
                     selectedItem === item.id ? 'selected' : ''
                   }`}
                   key={item.id}
@@ -127,7 +155,7 @@ const Search: NextPageWithLayout = () => {
             }
             return null;
           })}
-          <div className='relative top-[5px] sm:hidden'>
+          <div id='carbonPlus' onClick={handlePlus} className='cursor-pointer relative top-[5px] sm:hidden'>
           <Carbon />
           </div>
         </div>

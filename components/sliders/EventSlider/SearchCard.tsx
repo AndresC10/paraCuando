@@ -17,11 +17,9 @@ const SearchCard: FC<SearchCardProps> = ({
   description,
   url,
   votos,
-  reference_link
+  reference_link,
 }) => {
-
   const [isActive, setIsActive] = useState<boolean>(false);
-
 
   const handleClick: MouseEventHandler<HTMLSpanElement> = (event) => {
     event.preventDefault();
@@ -29,17 +27,23 @@ const SearchCard: FC<SearchCardProps> = ({
   };
 
   return (
-    <Link className='w-full' href={url}>
-      <div className="relative flex gap-6 rounded-xl overflow-hidden max-w-[934px] h-[239px] mx-auto bg-white border-solid border-black card-shadow mb-1">
+    <div className="">
+      <Link
+        href={url}
+        className="relative flex gap-6 rounded-xl overflow-hidden max-w-[934px] h-[239px] mx-auto bg-white border-solid border-black card-shadow mb-1"
+      >
         <img
           src={imageUrl}
           alt={name}
           className="w-1/3 h-[239px] object-cover rounded-xl"
         />
-        <div className="absolute top-2 right-4">
-         <span onClick={handleClick}>
-         <Heart isActive={isActive}  />
-          </span> 
+        <div className="absolute top-1 right-2">
+          <span onClick={handleClick}>
+            <Heart
+              className="hover:scale-125 active:scale-75 transition-transform duration-300"
+              isActive={isActive}
+            />
+          </span>
         </div>
         <div className="flex flex-col justify-center w-2/3 px-4 py-3 bg-white bg-opacity-70">
           <h3 className="app-title-3">{name}</h3>
@@ -48,14 +52,16 @@ const SearchCard: FC<SearchCardProps> = ({
               {description}
             </p>
           </div>
-          <p className="mt-3 text-app-blue font-medium text-sm">{reference_link}</p>
+          <p className="mt-3 text-app-blue font-medium text-sm">
+            {reference_link}
+          </p>
           <div className="flex gap-2 mt-2">
             <User />
             <p className="app-text-2 font-semibold mt-[4.4px]">{votos} votos</p>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
