@@ -8,6 +8,7 @@ import { CheckIcon } from '../components/assets/svg/CheckIcon';
 import { ErrorIcon } from '../components/assets/svg/ErrorIcon';
 import { Exit } from '../components/assets/svg/Exit';
 import { PasswordIcon } from '../components/assets/svg/PasswordIcon';
+import { alertError, alertSuccess } from '../lib/helpers/alert.helper';
 import { NextPageWithLayout } from './page';
 
 type FormValues = {
@@ -39,10 +40,12 @@ const SignUp: NextPageWithLayout = () => {
       .then((res) => {
         console.log(res);
         router.push('/sign_in');
+        alertSuccess('Usuario creado exitosamente');
       })
       .catch((err) => {
         onError(err);
         console.log(err);
+        alertError('Ocurrio un error, por favor vuelva a intentarlo');
       });
 
     reset({

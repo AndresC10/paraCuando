@@ -9,6 +9,7 @@ import { CheckIcon } from '../components/assets/svg/CheckIcon';
 import { ErrorIcon } from '../components/assets/svg/ErrorIcon';
 import { Exit } from '../components/assets/svg/Exit';
 import { PasswordIcon } from '../components/assets/svg/PasswordIcon';
+import { alertError, alertSuccess } from '../lib/helpers/alert.helper';
 import { NextPageWithLayout } from './page';
 
 const SignIn: NextPageWithLayout = () => {
@@ -39,10 +40,11 @@ const SignIn: NextPageWithLayout = () => {
         Cookies.set('token', res.data.token);
 
         router.push('/');
-        console.log(res.data);
+        alertSuccess('Sesión inciada');
       })
       .catch((err) => {
         onError(err);
+        alertError('Error al iniciar sesión');
       });
 
     reset({

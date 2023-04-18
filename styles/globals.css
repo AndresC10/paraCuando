@@ -130,3 +130,7 @@ input:-webkit-autofill {
 .selected {
   border-bottom: 4px solid blue;
 }
+
+.alert {
+  border-radius: 0.75rem !important;
+}
