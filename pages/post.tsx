@@ -9,6 +9,9 @@ import {
 } from '../lib/services/publications.services';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
+
 
 const Post: NextPageWithLayout = () => {
   const [step, setStep] = useState<number>(1);
@@ -17,6 +20,15 @@ const Post: NextPageWithLayout = () => {
     null,
     null,
   ]);
+
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [referenceLink, setReferenceLink] = useState<string>('');
+
+  const token = Cookies.get('token')
+  const router = useRouter();
 
   const fileInputRef1 = useRef<HTMLInputElement>(null);
   const fileInputRef2 = useRef<HTMLInputElement>(null);
@@ -75,18 +87,23 @@ const Post: NextPageWithLayout = () => {
   
     // Añade imágenes al formData
     if (fileInputRef1.current?.files) {
-      imageData.append('image', fileInputRef1.current.files[0]);
+      imageData.append('images', fileInputRef1.current.files[0]);
     }
     if (fileInputRef2.current?.files) {
-      imageData.append('image', fileInputRef2.current.files[0]);
+      imageData.append('images', fileInputRef2.current.files[0]);
     }
     if (fileInputRef3.current?.files) {
-      imageData.append('image', fileInputRef3.current.files[0]);
+      imageData.append('images', fileInputRef3.current.files[0]);
     }
   
+   console.log(fileInputRef1.current?.files)
     axios
-      .post(`/publications/${publicationID}/add-image`, imageData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      .post(`https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publicationID}/add-image`, imageData, {
+        headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      },
+
       })
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
@@ -94,12 +111,16 @@ const Post: NextPageWithLayout = () => {
 
   const onSubmit = (fdata: FormValues) => {
     createAndUploadImages(fdata);
+    reset(defaultValues)
+
+    router.push('/')
   };
   
 
   const handleNext = () => {
-   
-
+    if(title === '' || content === '' || type === '' || category === '' || referenceLink === '') {
+      return console.log('El campo no puede estar vacio')
+    }
     setStep(step + 1);
   };
 
@@ -109,6 +130,10 @@ const Post: NextPageWithLayout = () => {
     category: '',
     recomendation: '',
     link: '',
+    content: '',
+    fileInputRef1: '',
+    fileInputRef2: '',
+    fileInputRef3: '',
   };
 
   const handleBack = () => {
@@ -179,12 +204,12 @@ const Post: NextPageWithLayout = () => {
           </>
         ) : (
           <>
-            <button
+            <div
               className="app-title-3 font-medium text-app-blue relative top-4 ml-4 sm:ml-10 sm:top-10"
               onClick={handleBack}
             >
               Back
-            </button>
+            </div>
           </>
         )}
 
@@ -211,9 +236,12 @@ const Post: NextPageWithLayout = () => {
                     Titulo de publicación
                   </p>
                   <input
+                    id='title'
+                    value={title}
                     {...register('title', { required: true })}
                     type="text"
                     className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                   <div className="relative mt-6 flex gap-4">
                     <select
@@ -221,6 +249,8 @@ const Post: NextPageWithLayout = () => {
                       className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
                       name="publication_type_id"
                       id="publication_type_id"
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
                     >
                       <option value="">Tipo</option>
                       {publicationsTypes?.map((item: any) => (
@@ -234,6 +264,8 @@ const Post: NextPageWithLayout = () => {
                       className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
                       name="tags"
                       id="tags"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
                     >
                       <option value="">Category</option>
                       {tags?.map((item: any) => (
@@ -252,6 +284,8 @@ const Post: NextPageWithLayout = () => {
                       className="w-full -mt-3 border-2 rounded-2xl pl-4 pt-4"
                       name="content"
                       id="content"
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
                     ></textarea>
                   </div>
                   <div className="mt-6 w-full">
@@ -264,6 +298,8 @@ const Post: NextPageWithLayout = () => {
                       className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
                       name="reference_link"
                       id="reference_link"
+                      value={referenceLink}
+                      onChange={(e) => setReferenceLink(e.target.value)}
                     />
                   </div>
                   <div className="flex items-center justify-center w-full mt-10">

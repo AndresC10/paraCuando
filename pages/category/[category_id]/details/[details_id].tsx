@@ -129,7 +129,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         {categories?.map((item: any) => {
             return (
               <Link href={`/category/${item.id}`} key={item.id}>
-                <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+                <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2 hover:scale-110 transition-all duration-300">
                   {item.name}
                 </button>
               </Link>
@@ -142,7 +142,7 @@ export const CategoryPage: NextPageWithLayout = () => {
               name="searchValue"
               placeholder="¿Qué quieres ver en tu ciudad?"
               onChange={handleChange}
-              className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+              className='md:ml-0 px-6 py-4 rounded-3xl w-[300px] sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             />
           </form>
         </div>
@@ -183,13 +183,13 @@ export const CategoryPage: NextPageWithLayout = () => {
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
         {
               tag?.map((item: any) => (
-                <button key={item.id} className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                <button key={item.id} className="bg-white w-40 h-14 mx-2 text-app-gray rounded-full app-text-2 leading-[15.23px] hover:scale-110 transition-transform duration-300">
                   {item.name}
                 </button>
               ))
             }
         </div>
-        <Link href={'todoslosinteres'}>
+        <Link href={`/category/${1}`}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">
             Ver todos los intereses
           </p>
