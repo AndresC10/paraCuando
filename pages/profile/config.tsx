@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { Layout } from '../../components/layout/Layout';
+import { alertSuccess } from '../../lib/helpers/alert.helper';
 import axios from '../../lib/helpers/axios.helper';
 import { useUserMe } from '../../lib/services/userMe.services';
 import { NextPageWithLayout } from '../page';
@@ -66,7 +67,7 @@ export const ConfigPage: NextPageWithLayout = () => {
 
     axios
       .put(`/users/${data?.id}`, dataObj)
-      .then((res) => console.log(res))
+      .then(alertSuccess('Perfil actualizado correctamente'))
       .catch((err) => console.log(err));
     if (profileImg) {
       submitImage();
