@@ -10,10 +10,13 @@ import { publicationToCardEvent, sortPublicationsByDate } from '../../../../lib/
 import { usePublications, useTags } from '../../../../lib/services/publications.services';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-
+import { alertSuccess } from '../../../../lib/helpers/alert.helper';
+import useSWR from 'swr';
+import { useUserMe } from '../../../../lib/services/userMe.services';
 
 
 export const CategoryPage: NextPageWithLayout = () => {
+
 
   const router = useRouter();
   const { details_id } = router.query;
@@ -23,7 +26,10 @@ export const CategoryPage: NextPageWithLayout = () => {
   const [userVoted, setUserVoted] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState('');
 
-  
+    const { data } = useUserMe();
+  const { data: userData } = useSWR(() =>
+    data && data.id ? '/users/' + data.id : null
+  );
  
   const firstImage = publication?.images?.[0]?.image_url || '';
   const tagsArray = publication?.tags?.map((tag: any) => tag.name) || [];
@@ -66,14 +72,31 @@ export const CategoryPage: NextPageWithLayout = () => {
     });
   }, [details_id, publications])
 
+  useEffect(() => {
+    axios
+    .get(`https://paracuando-academlo-api.academlo.tech/api/v1/users/${data?.id}/votes/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      const userVotes = response.data.results.results;
+      const userVote = userVotes?.find((vote: any) => vote.id === details_id);
+      if (userVote) {
+        setUserVoted(true);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }, [data,token, details_id])
+
   
   const cardEventsSortByDate = sortPublicationsByDate(publications || []).map(publicationToCardEvent) || [];
 
   const handleVotar = () => {
 
-    //si el usuario esta logueado, si no mandar a login
     if (!token) {
-      console.log('hola')
       router.push('/sign_up');
       return;
     }
@@ -89,15 +112,19 @@ export const CategoryPage: NextPageWithLayout = () => {
         },
       })
         .then((response) => {
-          console.log(response);
-          // Actualiza el estado local de la publicación y el conteo de votos
-          setPublication({
-            ...publication,
-            votes_count: userVoted
-              ? publication.votes_count - 1
-              : publication.votes_count + 1,
-          });
-          // Cambia el estado del voto del usuario
+          if(userVoted) {
+            setPublication({
+              ...publication,
+              votes_count: publication.votes_count - 1,
+            });
+            alertSuccess('Voto eliminado con éxito');
+          } else {
+            setPublication({
+              ...publication,
+              votes_count: publication.votes_count + 1,
+            });
+            alertSuccess('Voto agregado con éxito');
+          }
           setUserVoted(!userVoted);
         })
         .catch((error) => {
@@ -166,7 +193,7 @@ export const CategoryPage: NextPageWithLayout = () => {
           <img className='w-full h-96 sm:h-auto' src={firstImage} alt="" />
         </div>
         <div className='sm:col-span-4 sm:row-start-6 sm:row-end-6'>
-        <button onClick={handleVotar} className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white'>
+        <button onClick={handleVotar} className=' mt-4 w-full h-[46px] text-center bg-app-blue rounded-3xl text-white hover:bg-blue-400 transition-all duration-300'>
             Votar
           </button>
         </div>

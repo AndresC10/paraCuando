@@ -47,8 +47,8 @@ export const CategoryPage: NextPageWithLayout = () => {
     }
   };
   
-
   const publicationsTypesById: PublicationType = publicationsTypes?.find((publicationType: any) => publicationType.id == category_id) ?? {};
+  const [selectedItem, setSelectedItem] = useState(publicationsTypesById?.id || '');
   
   // Desestructura id y name de publicationsTypesById
   const { id, name } = publicationsTypesById;
@@ -87,8 +87,8 @@ export const CategoryPage: NextPageWithLayout = () => {
         <div className="relative sm:flex items-center justify-center gap-2 xs:hidden">
           {publicationsTypes?.map((item: any) => {
             return (
-              <Link href={`/category/${item.id}`} key={item.id}>
-                <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2 hover:scale-110 transition-all duration-300">
+              <Link href={`/category/${item.id}`} key={item?.id}>
+                <button onClick={() => setSelectedItem(item?.id)} className={`bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2 hover:scale-110 transition-all duration-300 ${selectedItem === item?.id ? 'border-2 border-app-yellow' : '' }`}>
                   {item.name}
                 </button>
               </Link>
@@ -127,7 +127,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
         {
               tags?.map((item: any) => (
-                <button key={item.id} className="bg-white w-40 h-14 mx-2 text-app-gray rounded-full app-text-2 leading-[15.23px] hover:scale-110 transition-transform duration-300">
+                <button key={item.id} className={`bg-white w-40 h-14 mx-2 text-app-gray rounded-full app-text-2 leading-[15.23px] hover:scale-110 transition-transform duration-300`}>
                   {item.name}
                 </button>
               ))

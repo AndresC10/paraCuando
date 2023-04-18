@@ -134,3 +134,29 @@ input:-webkit-autofill {
 .alert {
   border-radius: 0.75rem !important;
 }
+
+.divCarbon {
+  position: absolute;
+  width: 174px;
+  height: 106px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  z-index: 100;
+  right: -10px;
+  top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.pCarbon {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: #000000;
+}

@@ -38,7 +38,7 @@ const EventCard: FC<EventCardProps> = ({
         />
         <div className="absolute top-[205px] right-4">
          <span onClick={handleClick}>
-         <Heart isActive={isActive}  />
+         <Heart className='hover:scale-125 active:scale-75 transition-transform duration-300' isActive={isActive}  />
           </span> 
         </div>
         <div className="w-full px-4 py-3 bg-white bg-opacity-70">

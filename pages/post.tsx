@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { title } from 'process';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NextPageWithLayout } from './page';
@@ -11,7 +10,7 @@ import { usePublicationsTypes } from '../lib/services/publications-types.service
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-
+import { alertError, alertSuccess } from '../lib/helpers/alert.helper';
 
 const Post: NextPageWithLayout = () => {
   const [step, setStep] = useState<number>(1);
@@ -27,7 +26,7 @@ const Post: NextPageWithLayout = () => {
   const [category, setCategory] = useState<string>('');
   const [referenceLink, setReferenceLink] = useState<string>('');
 
-  const token = Cookies.get('token')
+  const token = Cookies.get('token');
   const router = useRouter();
 
   const fileInputRef1 = useRef<HTMLInputElement>(null);
@@ -70,9 +69,9 @@ const Post: NextPageWithLayout = () => {
   // const formData = new FormData();
 
   const createAndUploadImages = async (fdata: FormValues) => {
-    fdata.description = fdata.content
+    fdata.description = fdata.content;
     const response = await createPublication(fdata);
-  
+
     if (response.status === 200 || response.status === 201) {
       console.log('Publicación creada con éxito:', response.data);
       const publicationID = response.data.results.id;
@@ -84,7 +83,7 @@ const Post: NextPageWithLayout = () => {
 
   const uploadImages = async (publicationID: string) => {
     const imageData = new FormData();
-  
+
     // Añade imágenes al formData
     if (fileInputRef1.current?.files) {
       imageData.append('images', fileInputRef1.current.files[0]);
@@ -95,31 +94,41 @@ const Post: NextPageWithLayout = () => {
     if (fileInputRef3.current?.files) {
       imageData.append('images', fileInputRef3.current.files[0]);
     }
-  
-   console.log(fileInputRef1.current?.files)
-    axios
-      .post(`https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publicationID}/add-image`, imageData, {
-        headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
-      },
 
-      })
+    console.log(fileInputRef1.current?.files);
+    axios
+      .post(
+        `https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publicationID}/add-image`,
+        imageData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   };
 
   const onSubmit = (fdata: FormValues) => {
     createAndUploadImages(fdata);
-    reset(defaultValues)
-
-    router.push('/')
+    reset(defaultValues);
+    alertSuccess('Publicación creada con éxito');
+    setTimeout(() => {
+      router.push('/');
+    }, 2000);
   };
-  
 
   const handleNext = () => {
-    if(title === '' || content === '' || type === '' || category === '' || referenceLink === '') {
-      return console.log('El campo no puede estar vacio')
+    if (
+      title === '' ||
+      content === '' ||
+      type === '' ||
+      category === '' ||
+      referenceLink === ''
+    ) {
+      return alertError('El campo no puede estar vacio');
     }
     setStep(step + 1);
   };
@@ -214,7 +223,7 @@ const Post: NextPageWithLayout = () => {
         )}
 
         <form
-          onSubmit={handleSubmit(onSubmit)} 
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] rounded-2xl"
         >
           {step === 1 ? (
@@ -236,7 +245,7 @@ const Post: NextPageWithLayout = () => {
                     Titulo de publicación
                   </p>
                   <input
-                    id='title'
+                    id="title"
                     value={title}
                     {...register('title', { required: true })}
                     type="text"
