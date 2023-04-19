@@ -136,8 +136,9 @@ input:-webkit-autofill {
 }
 
 .active-page {
-  color: black;
+  color: #1b4db1;
 }
+
 .divCarbon {
   position: absolute;
   width: 174px;
