@@ -11,19 +11,36 @@ import {
   sortPublicationsBySuggestion,
   filterPublicationsByCategory,
 } from '../../../lib/helpers/Publications.helper';
-import { usePublications, useTags } from '../../../lib/services/publications.services';
+import {
+  usePublications,
+  useTags,
+} from '../../../lib/services/publications.services';
 import { usePublicationsTypes } from '../../../lib/services/publications-types.services';
 import { useState } from 'react';
+import Loader from '../../../lib/helpers/Loader';
 
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedItem, setSelectedItem] = useState(0);
 
   const { category_id } = router.query;
 
-  const { data: publicationResponse, error, isLoading } = usePublications();
-  const {data: publicationsTypesResponse, error: errorPublicationsTypes, isLoading: isLoadingPublicationsTypes} = usePublicationsTypes();
-  const {data: tagsResponse, error: errorTags, isLoading: isLoadingTags} = useTags();
+  const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
+  const {
+    data: publicationsTypesResponse,
+    error: errorPublicationsTypes,
+    isLoading: isLoadingPublicationsTypes,
+  } = usePublicationsTypes();
+  const {
+    data: tagsResponse,
+    error: errorTags,
+    isLoading: isLoadingTags,
+  } = useTags();
 
+  if(isLoading || isLoadingPublicationsTypes || isLoadingTags) {
+    return <Loader />;
+  }
 
   const publications = publicationResponse?.results.results;
   const publicationsTypes = publicationsTypesResponse?.results.results;
@@ -34,7 +51,7 @@ export const CategoryPage: NextPageWithLayout = () => {
     name?: string;
   }
 
-  const [searchValue, setSearchValue] = useState('');
+
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
@@ -46,14 +63,20 @@ export const CategoryPage: NextPageWithLayout = () => {
       router.push(`/search?query=${searchValue}`);
     }
   };
-  
 
-  const publicationsTypesById: PublicationType = publicationsTypes?.find((publicationType: any) => publicationType.id == category_id) ?? {};
-  
+  const publicationsTypesById: PublicationType =
+    publicationsTypes?.find(
+      (publicationType: any) => publicationType.id == category_id
+    ) ?? {};
+
+
   // Desestructura id y name de publicationsTypesById
   const { id, name } = publicationsTypesById;
-  
-  const filteredPublications = id !== undefined ? filterPublicationsByCategory(publications || [], id) : [];
+
+  const filteredPublications =
+    id !== undefined
+      ? filterPublicationsByCategory(publications || [], id)
+      : [];
 
   const cardSortedByVotes =
     sortPublicationsByVotes(filteredPublications).map(publicationToCardEvent) ||
@@ -66,7 +89,6 @@ export const CategoryPage: NextPageWithLayout = () => {
       publicationToCardEvent
     ) || [];
 
- 
   return (
     <div>
       <div className='w-full h-52 bg-[url("/branch-and-stories.png")] bg-cover bg-center'>
@@ -87,23 +109,30 @@ export const CategoryPage: NextPageWithLayout = () => {
         <div className="relative sm:flex items-center justify-center gap-2 xs:hidden">
           {publicationsTypes?.map((item: any) => {
             return (
-              <Link href={`/category/${item.id}`} key={item.id}>
-                <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2">
+              <Link href={`/category/${item.id}`} key={item?.id}>
+                <button
+                  onClick={() => setSelectedItem(item?.id)}
+                  className={`bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] border-2 hover:scale-110 transition-all duration-300 ${
+                    selectedItem === item?.id
+                      ? 'border-2 border-app-yellow'
+                      : ''
+                  }`}
+                >
                   {item.name}
                 </button>
               </Link>
             );
           })}
         </div>
-         <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="searchValue"
-              placeholder="¿Qué quieres ver en tu ciudad?"
-              onChange={handleChange}
-              className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
-            />
-          </form>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="searchValue"
+            placeholder="¿Qué quieres ver en tu ciudad?"
+            onChange={handleChange}
+            className='xs:ml-0 md:ml-0 px-6 py-4 rounded-3xl w-[300px] sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+          />
+        </form>
       </div>
 
       <EventSlider
@@ -125,13 +154,14 @@ export const CategoryPage: NextPageWithLayout = () => {
           gustos
         </p>
         <div className="flex gap-2 mt-12 md:w-[941px] xs:w-[460px]">
-        {
-              tags?.map((item: any) => (
-                <button key={item.id} className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]">
-                  {item.name}
-                </button>
-              ))
-            }
+          {tags?.map((item: any) => (
+            <button
+              key={item.id}
+              className={`bg-white w-40 h-14 mx-2 text-app-gray rounded-full app-text-2 leading-[15.23px] hover:scale-110 transition-transform duration-300`}
+            >
+              {item.name}
+            </button>
+          ))}
         </div>
         <Link href={`/category/${1}`}>
           <p className="relative ml-8 top-16 app-subtitle-1 text-[#1b4db1] pb-4">

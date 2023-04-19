@@ -16,8 +16,12 @@ import {
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Loader from '../lib/helpers/Loader';
 
 const Home: NextPageWithLayout = () => {
+
+  
+
   const [searchValue, setSearchValue] = useState('');
   const router = useRouter();
 
@@ -32,7 +36,7 @@ const Home: NextPageWithLayout = () => {
     }
   };
 
-  const { data: publicationResponse, error, isLoading } = usePublications();
+  const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
   const {
     data: publicationsTypesResponse,
     error: errorPublicationsTypes,
@@ -59,6 +63,10 @@ const Home: NextPageWithLayout = () => {
       publicationToCardEvent
     ) || [];
 
+    if (isLoading || isLoadingPublicationsTypes || isLoadingTags) {
+      return <Loader />; 
+    }
+
   return (
     <div>
       {/* HERO SECTION */}
@@ -73,14 +81,14 @@ const Home: NextPageWithLayout = () => {
               name="searchValue"
               placeholder="¿Qué quieres ver en tu ciudad?"
               onChange={handleChange}
-              className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+              className='md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[465px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             />
           </form>
           <div className="relative flex items-center justify-center gap-2">
             {publicationsTypes?.map((item: any) => {
               return (
                 <Link href={`/category/${item.id}`} key={item.id}>
-                  <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px]">
+                  <button className="bg-white px-3 py-2 text-app-gray rounded-full app-text-2 leading-[15.23px] hover:scale-110 transition-all duration-300">
                     {item.name}
                   </button>
                 </Link>
@@ -118,7 +126,7 @@ const Home: NextPageWithLayout = () => {
           {tags?.map((item: any) => (
             <button
               key={item.id}
-              className="bg-white px-3 py-2 w-80 text-app-gray rounded-full app-text-2 leading-[15.23px]"
+              className="bg-white w-40 h-14 mx-2 text-app-gray rounded-full app-text-2 leading-[15.23px] hover:scale-110 transition-transform duration-300"
             >
               {item.name}
             </button>

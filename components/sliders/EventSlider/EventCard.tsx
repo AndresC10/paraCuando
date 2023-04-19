@@ -9,6 +9,7 @@ interface EventCardProps {
   description: string;
   url: string;
   votos: number;
+  reference_link: string;
 }
 
 const EventCard: FC<EventCardProps> = ({
@@ -17,6 +18,7 @@ const EventCard: FC<EventCardProps> = ({
   description,
   url,
   votos,
+  reference_link,
 }) => {
   const [isActive, setIsActive] = useState<boolean>(false);
 
@@ -35,7 +37,10 @@ const EventCard: FC<EventCardProps> = ({
         />
         <div className="absolute top-[205px] right-4">
           <span onClick={handleClick}>
-            <Heart isActive={isActive} />
+            <Heart
+              className="hover:scale-125 active:scale-75 transition-transform duration-300"
+              isActive={isActive}
+            />
           </span>
         </div>
         <div className="w-full px-4 py-3 bg-white bg-opacity-70">
@@ -45,7 +50,9 @@ const EventCard: FC<EventCardProps> = ({
               {description}
             </p>
           </div>
-          <p className="mt-3 text-app-blue font-medium text-sm">{url}</p>
+          <p className="mt-3 text-app-blue font-medium text-sm">
+            {reference_link}
+          </p>
           <div className="flex gap-2 mt-2">
             <User />
             <p className="app-text-2 font-semibold mt-[4.4px]">{votos} votos</p>

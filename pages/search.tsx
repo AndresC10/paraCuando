@@ -5,34 +5,75 @@ import { useEffect, useState } from 'react';
 import SearchCard from '../components/sliders/EventSlider/SearchCard';
 import { usePublications } from '../lib/services/publications.services';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
-import { filterPublicationsByCategory, publicationToCardEvent, sortPublicationsByDate, sortPublicationsByVotes } from '../lib/helpers/Publications.helper';
+import {
+  filterPublicationsByCategory,
+  publicationToCardEvent,
+  sortPublicationsByDate,
+  sortPublicationsByVotes,
+} from '../lib/helpers/Publications.helper';
+import useWindowSize from '../lib/helpers/useWindowSize';
+import { Carbon } from '../components/assets/svg/Carbon';
 
 const Search: NextPageWithLayout = () => {
   const [selectedItem, setSelectedItem] = useState('');
   const [searchValue, setSearchValue] = useState('');
+  const [publicationsType, setPublicationsType] = useState<any>([]);
+  const windowSize = useWindowSize();
 
- 
-  
+  useEffect(() => {
+    setPublicationsType(
+      publicationsTypes?.map((publicationType: any) => publicationType.name)
+    );
+  }, []);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchValues = urlParams.get('query');
-    if(!urlParams) {
+    if (!urlParams) {
       return;
-    }
-    else {
+    } else {
       setSearchValue(searchValues || '');
     }
   }, []);
-  
+
+  const shouldRenderItem = (index: any) => {
+    const minWidth = 600;
+    return (windowSize.width && windowSize.width >= minWidth) || index === 0;
+  };
 
   const handleSelect = (id: string) => {
     setSelectedItem(id);
-
   };
 
   const handleSearch = (e: any) => {
     setSearchValue(e.target.value);
-  }
+  };
+
+  const handlePlus = () => {
+    const carbon = document.getElementById('carbonPlus');
+    if (carbon) {
+      const existingDiv = carbon.querySelector('.divCarbon');
+
+      if (existingDiv) {
+        carbon.removeChild(existingDiv);
+      } else {
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('divCarbon');
+        carbon.appendChild(newDiv);
+        publicationsTypes?.slice(1, 3).map((item: any) => {
+          const newP = document.createElement('p');
+          newP.classList.add('pCarbon');
+          newP.innerHTML = item.name;
+
+          newP.addEventListener('click', () => {
+            handleSelect(item.id);
+          });
+
+          newDiv.appendChild(newP);
+        });
+      }
+    }
+  };
 
   const {
     data: publicationsTypesResponse,
@@ -40,30 +81,35 @@ const Search: NextPageWithLayout = () => {
     isLoading: isLoadingPublicationsTypes,
   } = usePublicationsTypes();
 
-  const { data, error, isLoading } = usePublications();
+  const { data, error, isLoading } = usePublications("?size=300");
 
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const publications = data?.results.results;
 
-
   const filterPublicationsByName = (publications: any, searchValue: string) => {
-    if(!searchValue) return publications;
-    return publications.filter((publication: any) => publication?.title.toLowerCase().includes(searchValue.toLowerCase()));
-  }
+    if (!searchValue) return publications;
+    return publications.filter((publication: any) =>
+      publication?.title.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  };
 
   const cardEventsSortByDate =
-  sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
-  [];
+    sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
+    [];
 
-  const cardEventsSortByVotes = sortPublicationsByVotes(
-    filterPublicationsByName(publications || [], searchValue)
-  ).map(publicationToCardEvent) || [];
+  const cardEventsSortByVotes =
+    sortPublicationsByVotes(
+      filterPublicationsByName(publications || [], searchValue)
+    ).map(publicationToCardEvent) || [];
 
-  const sortByCategory = filterPublicationsByCategory(
-    filterPublicationsByName(publications || [], searchValue),
-    selectedItem
-  ).map(publicationToCardEvent) || [];
-  
+  const sortByCategory =
+    filterPublicationsByCategory(
+      filterPublicationsByName(publications || [], searchValue),
+      selectedItem
+    ).map(publicationToCardEvent) || [];
+
+  console.log(cardEventsSortByDate);
+  console.log(sortByCategory)
   return (
     <div>
       <div className='w-full h-36 bg-[url("/imgSearch.png")] bg-cover bg-center'>
@@ -77,71 +123,75 @@ const Search: NextPageWithLayout = () => {
           action=""
         >
           <input
-            className='xs:ml-20 md:ml-0 px-6 py-4 rounded-3xl w-full sm:w-[561px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
+            className='md:ml-0 px-6 py-3 rounded-3xl w-[350px] sm:w-[615px] border-2 bg-[url("/lens.png")] bg-no-repeat bg-[95%]'
             type="text"
             placeholder="¿Qué quieres ver en tu ciudad?"
             value={searchValue}
             onChange={handleSearch}
           />
-          <button
-            type="submit"
-            className="app-subtitle-1 w-32 h-12 bg-app-blue rounded-full text-white"
-          >
-            Search
-          </button>
         </form>
-        <div className="relative w-[700px] sm:flex justify-between gap-2 xs:hidden">
+        <div className="mt-1 relative xxs:w-[350px] sm:w-[650px] flex gap-6 sm:justify-between">
           <p
-            className={`relative pb-2 app-subtitle-2 text-app-grayDark ${
+            className={`cursor-pointer hover:scale-110 transition-transform duration-300 relative xs:text-sm pb-2 sm:app-subtitle-2 text-app-grayDark ${
               selectedItem === '' ? 'selected' : ''
             }`}
             onClick={() => handleSelect('')}
           >
             Todos los resultados
           </p>
-          {publicationsTypes?.map((item: any) => {
-            return (
-              <p
-                className={`relative pb-2 app-subtitle-2 text-app-grayDark ${
-                  selectedItem === item.id ? 'selected' : ''
-                }`}
-                key={item.id}
-                onClick={() => handleSelect(item.id)}
-              >
-                {item.name}
-              </p>
-            );
+          {publicationsTypes?.map((item: any, index) => {
+            if (shouldRenderItem(index)) {
+              return (
+                <p
+                  className={`cursor-pointer hover:scale-110 transition-transform duration-300 relative xs:text-sm pb-2 sm:app-subtitle-2 text-app-grayDark ${
+                    selectedItem === item.id ? 'selected' : ''
+                  }`}
+                  key={item.id}
+                  onClick={() => handleSelect(item.id)}
+                >
+                  {item.name}
+                </p>
+              );
+            }
+            return null;
           })}
+          <div
+            id="carbonPlus"
+            onClick={handlePlus}
+            className="cursor-pointer relative top-[5px] sm:hidden"
+          >
+            <Carbon />
+          </div>
         </div>
       </div>
       <div className=" flex flex-col gap-2 h-[72vh] w-[80%] mx-auto mt-8 mb-[430px]">
-        {
-         selectedItem === '' ?  cardEventsSortByVotes?.slice(0,4).map((item: any) => {
-          return (
-            <SearchCard
-              key={item.id}
-              imageUrl={item.imageUrl}
-              name={item.name}
-              description={item.description}
-              url={item.url}
-              votos={item.votos}
-            />
-          );
-      }) : 
-      sortByCategory?.slice(0,4).map((item: any) => {
-        return (
-          <SearchCard
-            key={item.id}
-            imageUrl={item.imageUrl}
-            name={item.name}
-            description={item.description}
-            url={item.url}
-            votos={item.votos}
-          />
-        );
-    })
-        }
-       
+        {selectedItem === ''
+          ? cardEventsSortByVotes?.slice(0, 4).map((item: any) => {
+              return (
+                <SearchCard
+                  key={item.id}
+                  imageUrl={item.imageUrl}
+                  name={item.name}
+                  description={item.description}
+                  url={item.url}
+                  votos={item.votos}
+                  reference_link={item.reference_link}
+                />
+              );
+            })
+          : sortByCategory?.slice(0, 4).map((item: any) => {
+              return (
+                <SearchCard
+                  key={item.id}
+                  imageUrl={item.imageUrl}
+                  name={item.name}
+                  description={item.description}
+                  url={item.url}
+                  votos={item.votos}
+                  reference_link={item.reference_link}
+                />
+              );
+            })}
       </div>
       <div className="h-[72vh] mt-8">
         <EventSlider

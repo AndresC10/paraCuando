@@ -14,6 +14,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
       url: './category/1/details/1',
       votos: 1,
+      reference_link: 'fdsfasdfasf',
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
@@ -21,6 +22,7 @@ export const CategoryPage: NextPageWithLayout = () => {
       description: 'Descripción del evento 2',
       url: 'ladygaga.com',
       votos: 1,
+      reference_link: 'fdsfasdfasf',
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
@@ -28,6 +30,7 @@ export const CategoryPage: NextPageWithLayout = () => {
       description: 'Descripción del evento 3',
       url: 'ladygaga.com',
       votos: 1,
+      reference_link: 'fdsfasdfasf',
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
@@ -35,6 +38,7 @@ export const CategoryPage: NextPageWithLayout = () => {
       description: 'Descripción del evento 4',
       url: 'ladygaga.com',
       votos: 1,
+      reference_link: 'fdsfasdfasf',
     },
     {
       imageUrl: 'https://via.placeholder.com/150',
@@ -42,6 +46,7 @@ export const CategoryPage: NextPageWithLayout = () => {
       description: 'Descripción del evento 5',
       url: 'ladygaga.com',
       votos: 1,
+      reference_link: 'fdsfasdfasf',
     },
   ];
 
@@ -104,8 +109,9 @@ export const CategoryPage: NextPageWithLayout = () => {
               imageUrl={event.images[0]?.image_url}
               name={event.title}
               description={event.description}
-              url={event.reference_link}
+              url={event.url}
               votos={event.votes_count}
+              reference_link={event.reference_link}
             />
           ))}
         </div>

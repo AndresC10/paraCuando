@@ -9,6 +9,7 @@ export const publicationToCardEvent = (publication: Publication) => {
     description: publication.description,
     url: `/category/${publication.publication_type_id}/details/${publication.id}`,
     votos: publication.votes_count,
+    reference_link: publication.reference_link,
   };
 };
 
@@ -21,7 +22,6 @@ export const calculateSuggestionValue = (publication: Publication) => {
 
   const voteScore = publication.votes_count;
   const ageScore = 1 - Math.min(age / maxAge, 1);
-
 
   return voteWeight * voteScore + ageWeight * ageScore;
 };
@@ -43,6 +43,11 @@ export const sortPublicationsBySuggestion = (publications: Publication[]) => {
   );
 };
 
-export const filterPublicationsByCategory = (publications: Publication[], categoryId: any) => {
-  return publications.filter((publication) => publication.publication_type_id === categoryId);
+export const filterPublicationsByCategory = (
+  publications: Publication[],
+  categoryId: any
+) => {
+  return publications.filter(
+    (publication) => publication.publication_type_id === categoryId
+  );
 };

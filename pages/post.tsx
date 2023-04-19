@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { title } from 'process';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NextPageWithLayout } from './page';
@@ -8,6 +7,10 @@ import {
   useTags,
 } from '../lib/services/publications.services';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
+import { alertError, alertSuccess } from '../lib/helpers/alert.helper';
 
 const Post: NextPageWithLayout = () => {
   const [step, setStep] = useState<number>(1);
@@ -16,6 +19,15 @@ const Post: NextPageWithLayout = () => {
     null,
     null,
   ]);
+
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [referenceLink, setReferenceLink] = useState<string>('');
+
+  const token = Cookies.get('token');
+  const router = useRouter();
 
   const fileInputRef1 = useRef<HTMLInputElement>(null);
   const fileInputRef2 = useRef<HTMLInputElement>(null);
@@ -42,11 +54,9 @@ const Post: NextPageWithLayout = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormValues>();
 
-  type FormData = {
-    // Define los tipos de datos para el objeto FormData
-    // Por ejemplo:
+  type FormValues = {
     title: string;
     description: string;
     content: string;
@@ -56,45 +66,69 @@ const Post: NextPageWithLayout = () => {
     //...
   };
 
-  const onSubmit = async (data: any) => {
-    try {
-      const formData = new FormData();
+  // const formData = new FormData();
 
-      formData.append('title', 'Prueba 8');
-      formData.append('description', 'description prueba 7');
-      formData.append('content', 'content prueba 7');
-      formData.append('reference_link', 'reference_link prueba 7');
-      formData.append('publication_type_id', '1');
-      formData.append('tags', '1');
+  const createAndUploadImages = async (fdata: FormValues) => {
+    fdata.description = fdata.content;
+    const response = await createPublication(fdata);
 
-    //  return console.log(formData)
-      // imageURLs.forEach((url, index) => {
-      //   if (url) {
-      //     const fileInputRef = [fileInputRef1, fileInputRef2, fileInputRef3][index];
-      //     const file = fileInputRef.current?.files?.[0];
-      //     if (file) {
-      //       formData.append(`image-${index + 1}`, file);
-      //     }
-      //   }
-      // });
-
-      const response = await createPublication(formData);
-
-      // Verifica si la respuesta es exitosa antes de continuar
-      if (response.status === 200 || response.status === 201) {
-        // Realiza acciones adicionales como limpiar el formulario o redirigir al usuario
-        console.log('Publicación creada con éxito:', response.data);
-      } else {
-        console.error('Error al crear la publicación:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error al crear la publicación:', error);
+    if (response.status === 200 || response.status === 201) {
+      console.log('Publicación creada con éxito:', response.data);
+      const publicationID = response.data.results.id;
+      await uploadImages(publicationID);
+    } else {
+      console.error('Error al crear la publicación:', response.statusText);
     }
   };
 
+  const uploadImages = async (publicationID: string) => {
+    const imageData = new FormData();
+
+    // Añade imágenes al formData
+    if (fileInputRef1.current?.files) {
+      imageData.append('images', fileInputRef1.current.files[0]);
+    }
+    if (fileInputRef2.current?.files) {
+      imageData.append('images', fileInputRef2.current.files[0]);
+    }
+    if (fileInputRef3.current?.files) {
+      imageData.append('images', fileInputRef3.current.files[0]);
+    }
+
+    console.log(fileInputRef1.current?.files);
+    axios
+      .post(
+        `https://paracuando-academlo-api.academlo.tech/api/v1/publications/${publicationID}/add-image`,
+        imageData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+
+  const onSubmit = (fdata: FormValues) => {
+    createAndUploadImages(fdata);
+    reset(defaultValues);
+    alertSuccess('Publicación creada con éxito');
+    setTimeout(() => {
+      router.push('/');
+    }, 2000);
+  };
+
   const handleNext = () => {
-    if (title.includes('')) {
-      return console.log('no puede estar vacio');
+    if (
+      title === '' ||
+      content === '' ||
+      type === '' ||
+      category === '' ||
+      referenceLink === ''
+    ) {
+      return alertError('El campo no puede estar vacio');
     }
     setStep(step + 1);
   };
@@ -105,6 +139,10 @@ const Post: NextPageWithLayout = () => {
     category: '',
     recomendation: '',
     link: '',
+    content: '',
+    fileInputRef1: '',
+    fileInputRef2: '',
+    fileInputRef3: '',
   };
 
   const handleBack = () => {
@@ -175,17 +213,17 @@ const Post: NextPageWithLayout = () => {
           </>
         ) : (
           <>
-            <button
+            <div
               className="app-title-3 font-medium text-app-blue relative top-4 ml-4 sm:ml-10 sm:top-10"
               onClick={handleBack}
             >
               Back
-            </button>
+            </div>
           </>
         )}
 
-        <div
-          
+        <form
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col items-center gap-4 w-full max-w-[800px] mx-auto mt-20 h-[699px] rounded-2xl"
         >
           {step === 1 ? (
@@ -197,7 +235,7 @@ const Post: NextPageWithLayout = () => {
                     'linear-gradient(to right, blue 50%, gray 50%)',
                 }}
               ></div>
-              <form onSubmit={handleSubmit(onSubmit)} className="mt-5 flex flex-col gap-2 items-start w-[80%]">
+              <div className="mt-5 flex flex-col gap-2 items-start w-[80%]">
                 <h2 className="app-title-2 mt-4 ">Publicacion</h2>
                 <h3 className="app-subtitle-2 text-app-grayDark">
                   Informacion basica
@@ -207,17 +245,12 @@ const Post: NextPageWithLayout = () => {
                     Titulo de publicación
                   </p>
                   <input
+                    id="title"
+                    value={title}
                     {...register('title', { required: true })}
                     type="text"
                     className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
-                  />
-                  <p className="app-subtitle-2 text-app-gray relative ml-7 pl-1 w-[185px] bg-white z-50">
-                    Tde
-                  </p>
-                  <input
-                    {...register('description', { required: true })}
-                    type="text"
-                    className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                   <div className="relative mt-6 flex gap-4">
                     <select
@@ -225,6 +258,8 @@ const Post: NextPageWithLayout = () => {
                       className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
                       name="publication_type_id"
                       id="publication_type_id"
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
                     >
                       <option value="">Tipo</option>
                       {publicationsTypes?.map((item: any) => (
@@ -238,6 +273,8 @@ const Post: NextPageWithLayout = () => {
                       className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
                       name="tags"
                       id="tags"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
                     >
                       <option value="">Category</option>
                       {tags?.map((item: any) => (
@@ -256,6 +293,8 @@ const Post: NextPageWithLayout = () => {
                       className="w-full -mt-3 border-2 rounded-2xl pl-4 pt-4"
                       name="content"
                       id="content"
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
                     ></textarea>
                   </div>
                   <div className="mt-6 w-full">
@@ -268,19 +307,21 @@ const Post: NextPageWithLayout = () => {
                       className="relative border-2 block w-full h-14 -mt-3 rounded-2xl z-0 pl-4"
                       name="reference_link"
                       id="reference_link"
+                      value={referenceLink}
+                      onChange={(e) => setReferenceLink(e.target.value)}
                     />
                   </div>
                   <div className="flex items-center justify-center w-full mt-10">
                     <button
                       type="submit"
-                      // onClick={handleNext}
+                      onClick={handleNext}
                       className="app-subtitle-1 w-32 h-12 bg-app-blue rounded-full text-white"
                     >
                       Siguiente
                     </button>
                   </div>
                 </div>
-              </form>
+              </div>
             </>
           ) : (
             <>
@@ -363,7 +404,7 @@ const Post: NextPageWithLayout = () => {
               </div>
             </>
           )}
-        </div>
+        </form>
       </div>
     </div>
   );

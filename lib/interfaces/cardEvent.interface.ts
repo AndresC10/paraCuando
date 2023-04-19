@@ -4,4 +4,5 @@ export interface CardEvent {
   description: string;
   url: string;
   votos: number;
+  reference_link: string;
 }
