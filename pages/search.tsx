@@ -1,10 +1,8 @@
-import { Layout } from '../components/layout/Layout';
-import { NextPageWithLayout } from './page';
-import { usePublicationsTypes } from '../lib/services/publications-types.services';
 import { useEffect, useState } from 'react';
-import SearchCard from '../components/sliders/EventSlider/SearchCard';
-import { usePublications } from '../lib/services/publications.services';
+import { Carbon } from '../components/assets/svg/Carbon';
+import { Layout } from '../components/layout/Layout';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
+import SearchCard from '../components/sliders/EventSlider/SearchCard';
 import {
   filterPublicationsByCategory,
   publicationToCardEvent,
@@ -12,7 +10,9 @@ import {
   sortPublicationsByVotes,
 } from '../lib/helpers/Publications.helper';
 import useWindowSize from '../lib/helpers/useWindowSize';
-import { Carbon } from '../components/assets/svg/Carbon';
+import { usePublicationsTypes } from '../lib/services/publications-types.services';
+import { usePublications } from '../lib/services/publications.services';
+import { NextPageWithLayout } from './page';
 
 const Search: NextPageWithLayout = () => {
   const [selectedItem, setSelectedItem] = useState('');
@@ -81,7 +81,8 @@ const Search: NextPageWithLayout = () => {
     isLoading: isLoadingPublicationsTypes,
   } = usePublicationsTypes();
 
-  const { data, error, isLoading } = usePublications("?size=300");
+  const [page, setPage] = useState(1);
+  const { data, error, isLoading } = usePublications('?size=300');
 
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const publications = data?.results.results;
@@ -108,8 +109,24 @@ const Search: NextPageWithLayout = () => {
       selectedItem
     ).map(publicationToCardEvent) || [];
 
-  console.log(cardEventsSortByDate);
-  console.log(sortByCategory)
+  console.log(cardEventsSortByVotes);
+
+  const arrPages = [];
+  if (selectedItem === '') {
+    for (let index = 1; index < cardEventsSortByVotes.length; index++) {
+      arrPages.push(index);
+    }
+  } else {
+    for (let index = 1; index < cardEventsSortByVotes.length; index++) {
+      arrPages.push(index);
+    }
+  }
+  const handleClick = (e: any) => {
+    setPage(e.target.innerText);
+  };
+
+  console.log(page);
+  console.log(arrPages.slice(+page - 3, +page + 4));
   return (
     <div>
       <div className='w-full h-36 bg-[url("/imgSearch.png")] bg-cover bg-center'>
@@ -164,34 +181,65 @@ const Search: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
-      <div className=" flex flex-col gap-2 h-[72vh] w-[80%] mx-auto mt-8 mb-[430px]">
+      <div className=" flex flex-col gap-2  w-[80%] mx-auto mt-8 mb-[60px]">
         {selectedItem === ''
-          ? cardEventsSortByVotes?.slice(0, 4).map((item: any) => {
-              return (
-                <SearchCard
-                  key={item.id}
-                  imageUrl={item.imageUrl}
-                  name={item.name}
-                  description={item.description}
-                  url={item.url}
-                  votos={item.votos}
-                  reference_link={item.reference_link}
-                />
-              );
-            })
-          : sortByCategory?.slice(0, 4).map((item: any) => {
-              return (
-                <SearchCard
-                  key={item.id}
-                  imageUrl={item.imageUrl}
-                  name={item.name}
-                  description={item.description}
-                  url={item.url}
-                  votos={item.votos}
-                  reference_link={item.reference_link}
-                />
-              );
-            })}
+          ? cardEventsSortByVotes
+              ?.slice((+page - 1) * 10, +page * 10)
+              .map((item: any) => {
+                return (
+                  <SearchCard
+                    key={item.id}
+                    imageUrl={item.imageUrl}
+                    name={item.name}
+                    description={item.description}
+                    url={item.url}
+                    votos={item.votos}
+                    reference_link={item.reference_link}
+                  />
+                );
+              })
+          : sortByCategory
+              ?.slice((+page - 1) * 10, +page * 10)
+              .map((item: any) => {
+                return (
+                  <SearchCard
+                    key={item.id}
+                    imageUrl={item.imageUrl}
+                    name={item.name}
+                    description={item.description}
+                    url={item.url}
+                    votos={item.votos}
+                    reference_link={item.reference_link}
+                  />
+                );
+              })}
+      </div>
+      <div className="w-[100%]  flex justify-center">
+        <ul className="flex gap-3 xxs:gap-6 sm:gap-8 md:gap-10 mb-14">
+          {page > 4
+            ? arrPages?.slice(+page - 4, +page + 3).map((e) => (
+                <li
+                  className={`w-8 h-8 text-[16px] text-[#988989] flex items-center justify-center cursor-pointer ${
+                    page == e && 'active-page'
+                  }`}
+                  onClick={handleClick}
+                  key={e}
+                >
+                  {e}
+                </li>
+              ))
+            : arrPages?.slice(0, 7).map((e) => (
+                <li
+                  className={`w-8 h-8 text-[16px] text-[#988989] flex items-center justify-center cursor-pointer ${
+                    page == e && 'active-page'
+                  }`}
+                  onClick={handleClick}
+                  key={e}
+                >
+                  {e}
+                </li>
+              ))}
+        </ul>
       </div>
       <div className="h-[72vh] mt-8">
         <EventSlider

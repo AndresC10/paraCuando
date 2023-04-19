@@ -109,7 +109,7 @@ export const CategoryPage: NextPageWithLayout = () => {
               imageUrl={event.images[0]?.image_url}
               name={event.title}
               description={event.description}
-              url={event.url}
+              url={`/category/${event.publication_type.id}/details/${event.id}`}
               votos={event.votes_count}
               reference_link={event.reference_link}
             />
@@ -120,7 +120,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         <div className="w-[100%] bg-[#ECE6E6] flex justify-center">
           <ul className="flex gap-3 xxs:gap-6 sm:gap-8 md:gap-10 mb-14">
             {page > 4
-              ? arrPages?.slice(page - 4, +page + 3).map((e) => (
+              ? arrPages?.slice(+page - 4, +page + 3).map((e) => (
                   <li
                     className={`w-8 h-8 text-[16px] text-[#988989] flex items-center justify-center cursor-pointer ${
                       page == e && 'active-page'
