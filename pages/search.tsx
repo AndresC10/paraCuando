@@ -13,12 +13,15 @@ import useWindowSize from '../lib/helpers/useWindowSize';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
 import { usePublications } from '../lib/services/publications.services';
 import { NextPageWithLayout } from './page';
+import { PublicationsResponse } from '../lib/interfaces/publications.interface';
+import axios from 'axios';
 
 const Search: NextPageWithLayout = () => {
   const [selectedItem, setSelectedItem] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [publicationsType, setPublicationsType] = useState<any>([]);
   const windowSize = useWindowSize();
+  const [pageSize, setPageSize] = useState(25);
 
   useEffect(() => {
     setPublicationsType(
@@ -82,10 +85,31 @@ const Search: NextPageWithLayout = () => {
   } = usePublicationsTypes();
 
   const [page, setPage] = useState(1);
-  const { data, error, isLoading } = usePublications('?size=300');
+  const { data: publicationResponse, error, isLoading } = usePublications('?size=300');
 
   const publicationsTypes = publicationsTypesResponse?.results.results;
-  const publications = data?.results.results;
+  const publications = publicationResponse?.results.results;
+
+  const loadMoreData = async () => {
+    // Incrementar el tamaño de la página actual
+    setPageSize(pageSize + 25);
+  
+    // Obtener datos adicionales
+    try {
+      const response = await axios.get<PublicationsResponse>(`/publications?size=${pageSize + 25}`);
+  
+      if (publicationResponse) {
+        // Concatenar los datos nuevos con los datos existentes
+        const updatedData = [...publicationResponse.results.results, ...response.data.results.results];
+  
+        // Actualizar el estado de las publicaciones
+        publicationResponse.results.results = updatedData;
+      }
+  
+    } catch (error) {
+      console.error('Error fetching more data:', error);
+    }
+  };
 
   const filterPublicationsByName = (publications: any, searchValue: string) => {
     if (!searchValue) return publications;
@@ -95,12 +119,12 @@ const Search: NextPageWithLayout = () => {
   };
 
   const cardEventsSortByDate =
-    sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
+    sortPublicationsByDate(publications || [], pageSize).map(publicationToCardEvent) ||
     [];
 
   const cardEventsSortByVotes =
     sortPublicationsByVotes(
-      filterPublicationsByName(publications || [], searchValue)
+      filterPublicationsByName(publications || [], searchValue), pageSize
     ).map(publicationToCardEvent) || [];
 
   const sortByCategory =
@@ -254,6 +278,7 @@ const Search: NextPageWithLayout = () => {
           title="Recientes"
           subtitle="Las personas últimanete están hablando de esto"
           events={cardEventsSortByDate}
+          onLoadMore={loadMoreData}
         />
       </div>
     </div>
