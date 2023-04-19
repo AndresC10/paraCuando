@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { IconLogo } from '../../assets/logo/IconLogo';
 import { Arrow } from '../../assets/svg/Arrow';
 import { Avatar } from '../../assets/svg/Avatar';
@@ -76,6 +76,7 @@ const Header = () => {
                     Cookies.remove('token');
                     setToken('');
                     router.push('/');
+                    mutate(`/publications/?size=300`);
                   }}
                 >
                   Cerrar sesión

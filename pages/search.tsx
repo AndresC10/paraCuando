@@ -195,6 +195,10 @@ const Search: NextPageWithLayout = () => {
                     url={item.url}
                     votos={item.votos}
                     reference_link={item.reference_link}
+                    publication_id={item.publication_id}
+                    same_vote={
+                      item.same_vote && item.same_vote[0] ? true : false
+                    }
                   />
                 );
               })
@@ -210,6 +214,10 @@ const Search: NextPageWithLayout = () => {
                     url={item.url}
                     votos={item.votos}
                     reference_link={item.reference_link}
+                    publication_id={item.publication_id}
+                    same_vote={
+                      item.same_vote && item.same_vote[0] ? true : false
+                    }
                   />
                 );
               })}
