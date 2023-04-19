@@ -134,3 +134,7 @@ input:-webkit-autofill {
 .alert {
   border-radius: 0.75rem !important;
 }
+
+.active-page {
+  color: black;
+}
