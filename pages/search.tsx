@@ -37,7 +37,7 @@ const Search: NextPageWithLayout = () => {
   }, []);
 
   const shouldRenderItem = (index: any) => {
-    const minWidth = 600; 
+    const minWidth = 600;
     return (windowSize.width && windowSize.width >= minWidth) || index === 0;
   };
 
@@ -53,7 +53,7 @@ const Search: NextPageWithLayout = () => {
     const carbon = document.getElementById('carbonPlus');
     if (carbon) {
       const existingDiv = carbon.querySelector('.divCarbon');
-  
+
       if (existingDiv) {
         carbon.removeChild(existingDiv);
       } else {
@@ -64,18 +64,16 @@ const Search: NextPageWithLayout = () => {
           const newP = document.createElement('p');
           newP.classList.add('pCarbon');
           newP.innerHTML = item.name;
-  
+
           newP.addEventListener('click', () => {
             handleSelect(item.id);
           });
-  
+
           newDiv.appendChild(newP);
         });
       }
     }
   };
-  
-  
 
   const {
     data: publicationsTypesResponse,
@@ -83,7 +81,7 @@ const Search: NextPageWithLayout = () => {
     isLoading: isLoadingPublicationsTypes,
   } = usePublicationsTypes();
 
-  const { data, error, isLoading } = usePublications();
+  const { data, error, isLoading } = usePublications("?size=300");
 
   const publicationsTypes = publicationsTypesResponse?.results.results;
   const publications = data?.results.results;
@@ -110,6 +108,8 @@ const Search: NextPageWithLayout = () => {
       selectedItem
     ).map(publicationToCardEvent) || [];
 
+  console.log(cardEventsSortByDate);
+  console.log(sortByCategory)
   return (
     <div>
       <div className='w-full h-36 bg-[url("/imgSearch.png")] bg-cover bg-center'>
@@ -139,7 +139,7 @@ const Search: NextPageWithLayout = () => {
           >
             Todos los resultados
           </p>
-          {publicationsTypes?.map((item:any, index) => {
+          {publicationsTypes?.map((item: any, index) => {
             if (shouldRenderItem(index)) {
               return (
                 <p
@@ -155,8 +155,12 @@ const Search: NextPageWithLayout = () => {
             }
             return null;
           })}
-          <div id='carbonPlus' onClick={handlePlus} className='cursor-pointer relative top-[5px] sm:hidden'>
-          <Carbon />
+          <div
+            id="carbonPlus"
+            onClick={handlePlus}
+            className="cursor-pointer relative top-[5px] sm:hidden"
+          >
+            <Carbon />
           </div>
         </div>
       </div>

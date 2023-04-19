@@ -17,7 +17,6 @@ import {
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { alertSuccess } from '../../../../lib/helpers/alert.helper';
-import useSWR from 'swr';
 import { useUserMe } from '../../../../lib/services/userMe.services';
 
 export const CategoryPage: NextPageWithLayout = () => {
@@ -30,14 +29,12 @@ export const CategoryPage: NextPageWithLayout = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const { data } = useUserMe();
-  const { data: userData } = useSWR(() =>
-    data && data.id ? '/users/' + data.id : null
-  );
+
 
   const firstImage = publication?.images?.[0]?.image_url || '';
   const tagsArray = publication?.tags?.map((tag: any) => tag.name) || [];
 
-  const { data: publicationResponse, error, isLoading } = usePublications();
+  const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
 
   const publications = publicationResponse?.results.results;
   const {

@@ -16,8 +16,12 @@ import {
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Loader from '../lib/helpers/Loader';
 
 const Home: NextPageWithLayout = () => {
+
+  
+
   const [searchValue, setSearchValue] = useState('');
   const router = useRouter();
 
@@ -32,7 +36,7 @@ const Home: NextPageWithLayout = () => {
     }
   };
 
-  const { data: publicationResponse, error, isLoading } = usePublications();
+  const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
   const {
     data: publicationsTypesResponse,
     error: errorPublicationsTypes,
@@ -58,6 +62,10 @@ const Home: NextPageWithLayout = () => {
     sortPublicationsBySuggestion(publications || []).map(
       publicationToCardEvent
     ) || [];
+
+    if (isLoading || isLoadingPublicationsTypes || isLoadingTags) {
+      return <Loader />; 
+    }
 
   return (
     <div>
