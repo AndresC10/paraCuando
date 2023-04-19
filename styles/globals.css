@@ -135,6 +135,9 @@ input:-webkit-autofill {
   border-radius: 0.75rem !important;
 }
 
+.active-page {
+  color: black;
+}
 .divCarbon {
   position: absolute;
   width: 174px;

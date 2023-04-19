@@ -13,6 +13,9 @@ type FormValues = {
   image_url?: File[];
   first_name?: string;
   last_name?: string;
+  interest1: string;
+  interest2: string;
+  interest3: string;
 };
 
 export const ConfigPage: NextPageWithLayout = () => {
@@ -20,14 +23,18 @@ export const ConfigPage: NextPageWithLayout = () => {
   const { data: userData } = useSWR(() =>
     data && data.id ? '/users/' + data.id : null
   );
-
-  console.log(data);
+  const { data: tags } = useSWR('/tags');
+  console.log(tags);
+  console.log(userData);
 
   const { register, handleSubmit, getValues } = useForm<FormValues>({
     defaultValues: {
       image_url: userData?.results.image_url,
       first_name: userData?.results.first_name,
       last_name: userData?.results.last_name,
+      interest1: userData?.results.interests[0],
+      interest2: userData?.results.interests[1],
+      interest3: userData?.results.interests[2],
     },
   });
 
@@ -59,11 +66,29 @@ export const ConfigPage: NextPageWithLayout = () => {
         imageData.append('image', fdata.image_url[index]);
       }
     }
+    console.log(
+      fdata.interest1?.concat(',', fdata.interest2, ',', fdata.interest3)
+    );
 
-    const dataObj = {
-      first_name: fdata.first_name,
-      last_name: fdata.last_name,
-    };
+    let dataObj;
+
+    if (fdata.interest1 && fdata.interest2 && fdata.interest3) {
+      dataObj = {
+        first_name: fdata.first_name,
+        last_name: fdata.last_name,
+        interests: fdata.interest1?.concat(
+          ',',
+          fdata.interest2,
+          ',',
+          fdata.interest3
+        ),
+      };
+    } else {
+      dataObj = {
+        first_name: fdata.first_name,
+        last_name: fdata.last_name,
+      };
+    }
 
     axios
       .put(`/users/${data?.id}`, dataObj)
@@ -72,6 +97,7 @@ export const ConfigPage: NextPageWithLayout = () => {
     if (profileImg) {
       submitImage();
     }
+    console.log(fdata);
   };
 
   return (
@@ -105,20 +131,9 @@ export const ConfigPage: NextPageWithLayout = () => {
                 </div>
               ) : (
                 <div
-                  className={`w-[220px] h-[206px] rounded-[15px] mb-[19px] 'bg-[#D9D9D9]'
-                `}
+                  className={`w-[220px] h-[206px] rounded-[15px] mb-[19px] 'bg-[#D9D9D9]'`}
                 ></div>
               )}
-
-              {/* <div
-                className={`w-[220px] h-[206px]  rounded-[15px] mb-[19px] 'bg-[#D9D9D9]'
-                `}
-                style={
-                  data?.image_url
-                    ? { backgroundImage: `url(${data?.image_url})` }
-                    : { backgroundColor: '#D9D9D9' }
-                }
-              ></div> */}
               <label className="text-[16px] text-[#6E6A6C] cursor-pointer">
                 Agrega una foto para tu perfil
                 <input
@@ -167,21 +182,48 @@ export const ConfigPage: NextPageWithLayout = () => {
           <div className="xs:max-w-[375px] sm:max-w-[600px] w-[100%] md:max-w-[940px] mt-[29px] flex flex-col md:flex-row justify-center gap-[20px]">
             <div className="flex flex-col items-center">
               <div className="mb-[19px] w-[250px] lg:w-[300px] h-[152px] rounded-[15px] bg-[#D9D9D9]"></div>
-              <span className="text-[16px] text-[#6E6A6C]">
-                Añade una categoria
-              </span>
+              <select
+                className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
+                id="tags"
+                {...register('interest1')}
+              >
+                <option value="">Añade una categoria</option>
+                {tags?.results.results.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex flex-col items-center">
               <div className="mb-[19px] w-[250px] lg:w-[300px] h-[152px] rounded-[15px] bg-[#D9D9D9]"></div>
-              <span className="text-[16px] text-[#6E6A6C]">
-                Añade una categoria
-              </span>
+              <select
+                className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
+                id="tags"
+                {...register('interest2')}
+              >
+                <option value="">Añade una categoria</option>
+                {tags?.results.results.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex flex-col items-center">
               <div className="mb-[19px] w-[250px] lg:w-[300px] h-[152px] rounded-[15px] bg-[#D9D9D9]"></div>
-              <span className="text-[16px] text-[#6E6A6C]">
-                Añade una categoria
-              </span>
+              <select
+                className="text-app-gray relative w-[50%] h-14 border-2 rounded-2xl"
+                id="tags"
+                {...register('interest3')}
+              >
+                <option value="">Añade una categoria</option>
+                {tags?.results.results.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="mt-[43px] mb-[86px] flex justify-center">

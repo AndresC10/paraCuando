@@ -1,5 +1,5 @@
-import { FC, MouseEventHandler, useState } from 'react';
 import Link from 'next/link';
+import { FC, MouseEventHandler, useState } from 'react';
 import { Heart } from '../../assets/svg/Heart';
 import { User } from '../../assets/svg/User';
 
@@ -29,7 +29,7 @@ const EventCard: FC<EventCardProps> = ({
 
   return (
     <Link href={url}>
-      <div className="relative rounded-xl overflow-hidden max-w-[298px] h-[454px] bg-white border-solid border-black card-shadow mb-1">
+      <div className="relative rounded-xl overflow-hidden min-w-[298px] h-[454px] bg-white border-solid border-black card-shadow mb-1">
         <img
           src={imageUrl}
           alt={name}
