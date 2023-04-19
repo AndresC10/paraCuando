@@ -27,6 +27,7 @@ export interface Publication {
   publication_type: PublicationType;
   images: Image[];
   tags: PublicationType[];
+  same_vote: SameVoteType[];
 }
 
 export enum Description {
@@ -68,4 +69,13 @@ export enum LastName {
   Hello = 'Hello',
   Padrón = 'Padrón',
   Sanchez = 'sanchez',
+}
+
+export interface SameVoteType {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;
+  created_at: string;
+  updated_at: string;
 }

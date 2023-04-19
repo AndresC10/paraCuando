@@ -4,12 +4,14 @@ import { PublicationsResponse } from '../interfaces/publications.interface';
 import { TagsResponse } from '../interfaces/tags.interface';
 
 function usePublications(params?: string) {
-  const { data, error, isLoading } =
-    useSWR<PublicationsResponse>(`/publications/${params}`);
+  const { data, error, isLoading, mutate } = useSWR<PublicationsResponse>(
+    `/publications/${params}`
+  );
   return {
     data: data,
     error,
     isLoading,
+    mutate,
   };
 }
 

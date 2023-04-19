@@ -2,54 +2,9 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import { Layout } from '../../components/layout/Layout';
 import EventCard from '../../components/sliders/EventSlider/EventCard';
-import { CardEvent } from '../../lib/interfaces/cardEvent.interface';
 import { useUserMe } from '../../lib/services/userMe.services';
 import { NextPageWithLayout } from '../page';
 export const CategoryPage: NextPageWithLayout = () => {
-  const events: CardEvent[] = [
-    {
-      imageUrl: '/mock-event-image.png',
-      name: 'Concierto de Lady Gaga',
-      description:
-        ' El concierto con la temática de Lady gaga en Las Vegas. El concierto con la temática de Lady gaga en Las Vegas.El concierto con la temática.',
-      url: './category/1/details/1',
-      votos: 1,
-      reference_link: 'fdsfasdfasf',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 2',
-      description: 'Descripción del evento 2',
-      url: 'ladygaga.com',
-      votos: 1,
-      reference_link: 'fdsfasdfasf',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 3',
-      description: 'Descripción del evento 3',
-      url: 'ladygaga.com',
-      votos: 1,
-      reference_link: 'fdsfasdfasf',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 4',
-      description: 'Descripción del evento 4',
-      url: 'ladygaga.com',
-      votos: 1,
-      reference_link: 'fdsfasdfasf',
-    },
-    {
-      imageUrl: 'https://via.placeholder.com/150',
-      name: 'Evento 5',
-      description: 'Descripción del evento 5',
-      url: 'ladygaga.com',
-      votos: 1,
-      reference_link: 'fdsfasdfasf',
-    },
-  ];
-
   const [page, setPage] = useState(1);
   const [infoTag, setInfoTag] = useState('/votes');
   const { data } = useUserMe();
@@ -112,6 +67,8 @@ export const CategoryPage: NextPageWithLayout = () => {
               url={`/category/${event.publication_type.id}/details/${event.id}`}
               votos={event.votes_count}
               reference_link={event.reference_link}
+              publication_id={event.id}
+              same_vote={true}
             />
           ))}
         </div>

@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { FC, MouseEventHandler, useState } from 'react';
+import { FC, MouseEventHandler, useEffect, useState } from 'react';
+import { mutate } from 'swr';
+import axios from '../../../lib/helpers/axios.helper';
 import { Heart } from '../../assets/svg/Heart';
 import { User } from '../../assets/svg/User';
 
@@ -10,6 +12,8 @@ interface EventCardProps {
   url: string;
   votos: number;
   reference_link: string;
+  publication_id: string | number;
+  same_vote: boolean;
 }
 
 const EventCard: FC<EventCardProps> = ({
@@ -19,12 +23,26 @@ const EventCard: FC<EventCardProps> = ({
   url,
   votos,
   reference_link,
+  publication_id,
+  same_vote,
 }) => {
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const [isActive, setIsActive] = useState<boolean>();
+
+  useEffect(() => {
+    setIsActive(same_vote);
+  }, [same_vote]);
 
   const handleClick: MouseEventHandler<HTMLSpanElement> = (event) => {
     event.preventDefault();
     setIsActive(!isActive);
+    axios
+      .post(`/publications/${publication_id}/vote`)
+      .then((res) => {
+        console.log(res);
+        mutate(`/publications/?size=300`);
+        mutate((key) => typeof key === 'string' && key.startsWith('/users/'));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
