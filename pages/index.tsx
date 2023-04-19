@@ -17,8 +17,11 @@ import {
   useTags,
 } from '../lib/services/publications.services';
 import { NextPageWithLayout } from './page';
+import axios from 'axios';
+import { PublicationsResponse } from '../lib/interfaces/publications.interface';
 
 const Home: NextPageWithLayout = () => {
+
   const [searchValue, setSearchValue] = useState('');
   const router = useRouter();
 
@@ -33,7 +36,32 @@ const Home: NextPageWithLayout = () => {
     }
   };
 
-  const { data: publicationResponse, isLoading } = usePublications('?size=300');
+  const [pageSize, setPageSize] = useState(25);
+  const { data: publicationResponse, error, isLoading } = usePublications(`?size=${300}`);
+
+  const loadMoreData = async () => {
+    // Incrementar el tamaño de la página actual
+    setPageSize(pageSize + 25);
+  
+    // Obtener datos adicionales
+    try {
+      const response = await axios.get<PublicationsResponse>(`/publications?size=${pageSize + 25}`);
+  
+      if (publicationResponse) {
+        // Concatenar los datos nuevos con los datos existentes
+        const updatedData = [...publicationResponse.results.results, ...response.data.results.results];
+  
+        // Actualizar el estado de las publicaciones
+        publicationResponse.results.results = updatedData;
+      }
+  
+    } catch (error) {
+      console.error('Error fetching more data:', error);
+    }
+  };
+  
+  
+
   const {
     data: publicationsTypesResponse,
     isLoading: isLoadingPublicationsTypes,
@@ -45,19 +73,19 @@ const Home: NextPageWithLayout = () => {
   const tags = tagsResponse?.results.results;
 
   const cardEventsSort =
-    sortPublicationsByVotes(publications || []).map(publicationToCardEvent) ||
+    sortPublicationsByVotes(publications || [], pageSize).map(publicationToCardEvent) ||
     [];
   const cardEventsSortByDate =
-    sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
+    sortPublicationsByDate(publications || [], pageSize).map(publicationToCardEvent) ||
     [];
   const cardEventsSortBySuggestion =
-    sortPublicationsBySuggestion(publications || []).map(
+    sortPublicationsBySuggestion(publications || [], pageSize).map(
       publicationToCardEvent
     ) || [];
 
-  if (isLoading || isLoadingPublicationsTypes || isLoadingTags) {
-    return <Loader />;
-  }
+  // if (isLoading || isLoadingPublicationsTypes || isLoadingTags) {
+  //   return <Loader />;
+  // }
 
   console.log(cardEventsSort);
   return (
@@ -96,6 +124,7 @@ const Home: NextPageWithLayout = () => {
           title="Populares en Querétaro"
           subtitle="Lo que las personas piden más"
           events={cardEventsSort}
+          onLoadMore={loadMoreData}
         />
       </div>
 
@@ -104,6 +133,7 @@ const Home: NextPageWithLayout = () => {
           title="Sugerencias para ti"
           subtitle="Publicaciones que podrías colaborar"
           events={cardEventsSortBySuggestion}
+          onLoadMore={loadMoreData}
         />
       </div>
 
@@ -137,6 +167,7 @@ const Home: NextPageWithLayout = () => {
           title="Recientes"
           subtitle="Las personas últimanete están hablando de esto"
           events={cardEventsSortByDate}
+          onLoadMore={loadMoreData}
         />
       </div>
     </div>
