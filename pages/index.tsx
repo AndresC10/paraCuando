@@ -1,12 +1,10 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Logo from '../components/assets/logo/Logo';
 import { Layout } from '../components/layout/Layout';
 import { EventSlider } from '../components/sliders/EventSlider/EventSlider';
-import { NextPageWithLayout } from './page';
-import {
-  usePublications,
-  useTags,
-} from '../lib/services/publications.services';
+import Loader from '../lib/helpers/Loader';
 import {
   publicationToCardEvent,
   sortPublicationsByDate,
@@ -14,14 +12,13 @@ import {
   sortPublicationsByVotes,
 } from '../lib/helpers/Publications.helper';
 import { usePublicationsTypes } from '../lib/services/publications-types.services';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import Loader from '../lib/helpers/Loader';
+import {
+  usePublications,
+  useTags,
+} from '../lib/services/publications.services';
+import { NextPageWithLayout } from './page';
 
 const Home: NextPageWithLayout = () => {
-
-  
-
   const [searchValue, setSearchValue] = useState('');
   const router = useRouter();
 
@@ -36,17 +33,12 @@ const Home: NextPageWithLayout = () => {
     }
   };
 
-  const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
+  const { data: publicationResponse, isLoading } = usePublications('?size=300');
   const {
     data: publicationsTypesResponse,
-    error: errorPublicationsTypes,
     isLoading: isLoadingPublicationsTypes,
   } = usePublicationsTypes();
-  const {
-    data: tagsResponse,
-    error: errorTags,
-    isLoading: isLoadingTags,
-  } = useTags();
+  const { data: tagsResponse, isLoading: isLoadingTags } = useTags();
 
   const publications = publicationResponse?.results.results;
   const publicationsTypes = publicationsTypesResponse?.results.results;
@@ -63,10 +55,11 @@ const Home: NextPageWithLayout = () => {
       publicationToCardEvent
     ) || [];
 
-    if (isLoading || isLoadingPublicationsTypes || isLoadingTags) {
-      return <Loader />; 
-    }
+  if (isLoading || isLoadingPublicationsTypes || isLoadingTags) {
+    return <Loader />;
+  }
 
+  console.log(cardEventsSort);
   return (
     <div>
       {/* HERO SECTION */}
