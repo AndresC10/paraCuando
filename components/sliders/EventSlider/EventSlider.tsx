@@ -56,7 +56,7 @@ export const EventSlider: FC<IEventSlider> = ({ title, subtitle, events }) => {
                 votos={event.votos}
                 reference_link={event.reference_link}
                 publication_id={event.publication_id}
-                same_vote={event.same_vote[0] ? true : false}
+                same_vote={event.same_vote && event.same_vote[0] ? true : false}
               />
             </SwiperSlide>
           ))}
