@@ -18,11 +18,14 @@ import {
 import { usePublicationsTypes } from '../../../lib/services/publications-types.services';
 import { useState } from 'react';
 import Loader from '../../../lib/helpers/Loader';
+import { PublicationsResponse } from '../../../lib/interfaces/publications.interface';
+import axios from 'axios';
 
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState('');
   const [selectedItem, setSelectedItem] = useState(0);
+  const [pageSize, setPageSize] = useState(25);
 
   const { category_id } = router.query;
 
@@ -50,6 +53,27 @@ export const CategoryPage: NextPageWithLayout = () => {
     id?: number;
     name?: string;
   }
+
+  const loadMoreData = async () => {
+    // Incrementar el tamaño de la página actual
+    setPageSize(pageSize + 25);
+  
+    // Obtener datos adicionales
+    try {
+      const response = await axios.get<PublicationsResponse>(`/publications?size=${pageSize + 25}`);
+  
+      if (publicationResponse) {
+        // Concatenar los datos nuevos con los datos existentes
+        const updatedData = [...publicationResponse.results.results, ...response.data.results.results];
+  
+        // Actualizar el estado de las publicaciones
+        publicationResponse.results.results = updatedData;
+      }
+  
+    } catch (error) {
+      console.error('Error fetching more data:', error);
+    }
+  };
 
 
 
@@ -79,13 +103,13 @@ export const CategoryPage: NextPageWithLayout = () => {
       : [];
 
   const cardSortedByVotes =
-    sortPublicationsByVotes(filteredPublications).map(publicationToCardEvent) ||
+    sortPublicationsByVotes(filteredPublications, pageSize).map(publicationToCardEvent) ||
     [];
   const cardSortedByDate =
-    sortPublicationsByDate(filteredPublications).map(publicationToCardEvent) ||
+    sortPublicationsByDate(filteredPublications, pageSize).map(publicationToCardEvent) ||
     [];
   const cardSortedBySuggestion =
-    sortPublicationsBySuggestion(filteredPublications).map(
+    sortPublicationsBySuggestion(filteredPublications, pageSize).map(
       publicationToCardEvent
     ) || [];
 
@@ -139,11 +163,13 @@ export const CategoryPage: NextPageWithLayout = () => {
         title="Populares en Queretaro"
         subtitle="Lo que las personas piden mas"
         events={cardSortedByVotes}
+        onLoadMore={loadMoreData}
       />
       <EventSlider
         title="Sugerencias para ti"
         subtitle="Publicaciones que podrian colaborar"
         events={cardSortedBySuggestion}
+        onLoadMore={loadMoreData}
       />
       <div className="relative  h-[250px] w-[941px] mx-auto mt-20 mb-20 bg-[#f8f7fa]">
         <h2 className="relative ml-12 top-6 app-title-2 text-app-grayDark">
@@ -173,6 +199,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         title="Recientes"
         subtitle="Las personas ultimamente estan hablando de esto"
         events={cardSortedByDate}
+        onLoadMore={loadMoreData}
       />
     </div>
   );

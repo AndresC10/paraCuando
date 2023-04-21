@@ -18,6 +18,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { alertSuccess } from '../../../../lib/helpers/alert.helper';
 import { useUserMe } from '../../../../lib/services/userMe.services';
+import SimpleCarousel from '../../../../lib/helpers/SimpleCarousel';
+import { PublicationsResponse } from '../../../../lib/interfaces/publications.interface';
 
 export const CategoryPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -31,8 +33,32 @@ export const CategoryPage: NextPageWithLayout = () => {
   const { data } = useUserMe();
 
 
-  const firstImage = publication?.images?.[0]?.image_url || '';
   const tagsArray = publication?.tags?.map((tag: any) => tag.name) || [];
+
+ const images = publication?.images?.map((imageObj: any) => imageObj.image_url) || [];
+ const [pageSize, setPageSize] = useState(25);
+
+ const loadMoreData = async () => {
+  // Incrementar el tamaño de la página actual
+  setPageSize(pageSize + 25);
+
+  // Obtener datos adicionales
+  try {
+    const response = await axios.get<PublicationsResponse>(`/publications?size=${pageSize + 25}`);
+
+    if (publicationResponse) {
+      // Concatenar los datos nuevos con los datos existentes
+      const updatedData = [...publicationResponse.results.results, ...response.data.results.results];
+
+      // Actualizar el estado de las publicaciones
+      publicationResponse.results.results = updatedData;
+    }
+
+  } catch (error) {
+    console.error('Error fetching more data:', error);
+  }
+};
+
 
   const { data: publicationResponse, error, isLoading } = usePublications("?size=300");
 
@@ -100,7 +126,7 @@ export const CategoryPage: NextPageWithLayout = () => {
   }, [data, token, details_id]);
 
   const cardEventsSortByDate =
-    sortPublicationsByDate(publications || []).map(publicationToCardEvent) ||
+    sortPublicationsByDate(publications || [], pageSize).map(publicationToCardEvent) ||
     [];
 
   const handleVotar = () => {
@@ -184,13 +210,15 @@ export const CategoryPage: NextPageWithLayout = () => {
             publication?.publication_type?.name || ''
           } / ${tagsArray}`}</h3>
           <h2 className="app-title-1 mb-4">{publication?.title}</h2>
-          <div className="flex items-center mb-8 mt-4 row-start-3 row-end-5">
+          <div className="flex items-center mb-8 row-start-4 row-end-6">
             <p className="app-text-1 text-app-grayDark">
               {publication?.description}
             </p>
           </div>
+          <div className='row-start-6 row-end-6'>
+
           <Link
-            className="text-app-blue app-text-1 text-sm mt-4"
+            className="text-app-blue app-text-1 text-sm mt-4 "
             href={'/category/events'}
           >
             {publication?.reference_link}
@@ -203,9 +231,10 @@ export const CategoryPage: NextPageWithLayout = () => {
               {publication?.votes_count} votos
             </p>
           </div>
+          </div>
         </div>
         <div className="sm:ml-4 sm:col-span-4 sm:row-span-6 min-w-[300px] flex justify-center">
-          <img className="w-full h-96 sm:h-auto" src={firstImage} alt="" />
+          <SimpleCarousel images={images} />
         </div>
         <div className="sm:col-span-4 sm:row-start-6 sm:row-end-6">
           <button
@@ -246,6 +275,7 @@ export const CategoryPage: NextPageWithLayout = () => {
         title="Recientes"
         subtitle="Las personas ultimamente estan hablando de esto"
         events={cardEventsSortByDate}
+        onLoadMore={loadMoreData}
       />
     </div>
   );

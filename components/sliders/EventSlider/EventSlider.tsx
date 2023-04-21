@@ -3,14 +3,33 @@ import { BsArrowRightCircle } from 'react-icons/bs';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import EventCard from './EventCard';
+import { useState } from 'react';
 
 interface IEventSlider {
   title?: string;
   subtitle?: string;
   events: CardEvent[];
+  onLoadMore?: () => Promise<void>;
 }
 
-export const EventSlider: FC<IEventSlider> = ({ title, subtitle, events }) => {
+export const EventSlider: FC<IEventSlider> = ({ title, subtitle, events, onLoadMore }) => {
+
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+
+  const handleSwiperChange = (swiper: any) => {
+    const threshold = 5; // Ajusta este valor según tus necesidades
+  
+    if (!isLoadingMore && swiper.activeIndex > events.length - threshold && onLoadMore) {
+      setIsLoadingMore(true);
+      onLoadMore().finally(() => {
+        setIsLoadingMore(false);
+      });
+    }
+  };
+  
+
+
   return (
     <div className="app-container">
       <div className="pb-6">
@@ -21,7 +40,8 @@ export const EventSlider: FC<IEventSlider> = ({ title, subtitle, events }) => {
         <Swiper
           style={{ position: 'unset' }}
           slidesPerView={'auto'}
-          loop
+          loop={false}
+          onSlideChange={handleSwiperChange}
           breakpoints={{
             0: {
               slidesPerView: 1,

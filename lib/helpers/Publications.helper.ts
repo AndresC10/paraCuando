@@ -28,21 +28,22 @@ export const calculateSuggestionValue = (publication: Publication) => {
   return voteWeight * voteScore + ageWeight * ageScore;
 };
 
-export const sortPublicationsByVotes = (publications: Publication[]) => {
-  return publications.sort((a, b) => b.votes_count - a.votes_count);
+export const sortPublicationsByVotes = (publications: Publication[], numberOfPublications: number) => {
+  return publications
+    .sort((a, b) => b.votes_count - a.votes_count)
+    .slice(0, numberOfPublications);
 };
 
-export const sortPublicationsByDate = (publications: Publication[]) => {
-  return publications.sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
+export const sortPublicationsByDate = (publications: Publication[], numberOfPublications: number) => {
+  return publications
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, numberOfPublications);
 };
 
-export const sortPublicationsBySuggestion = (publications: Publication[]) => {
-  return publications.sort(
-    (a, b) => calculateSuggestionValue(b) - calculateSuggestionValue(a)
-  );
+export const sortPublicationsBySuggestion = (publications: Publication[], numberOfPublications: number) => {
+  return publications
+    .sort((a, b) => calculateSuggestionValue(b) - calculateSuggestionValue(a))
+    .slice(0, numberOfPublications);
 };
 
 export const filterPublicationsByCategory = (
